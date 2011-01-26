@@ -285,12 +285,12 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		}
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARCHAR(255), inferred ENUM(\'true\',\'false\') '.$collation.')
-                    TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_sub (category VARCHAR(255) NOT NULL)
-                    TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_super (category VARCHAR(255) NOT NULL)
-                    TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 
 		$domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => smwfGetSemanticStore()->domainRangeHintRelation->getDBkey()) );
 		if ($domainAndRange == NULL) {
@@ -368,12 +368,12 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		}
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARCHAR(255), inferred ENUM(\'true\',\'false\') '.$collation.')
-                    TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_sub (category VARCHAR(255) NOT NULL)
-                    TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_super (category VARCHAR(255) NOT NULL)
-                    TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 
 		$domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => smwfGetSemanticStore()->domainRangeHintRelation->getDBkey()) );
 		if ($domainAndRange == NULL) {
@@ -452,12 +452,12 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		}
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARCHAR(255), inferred ENUM(\'true\',\'false\') '.$collation.')
-                    TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_sub (category VARCHAR(255) NOT NULL)
-                    TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_super (category VARCHAR(255) NOT NULL)
-                    TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 
 		$domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => smwfGetSemanticStore()->domainRangeHintRelation->getDBkey()) );
 		if ($domainAndRange == NULL) {
@@ -540,13 +540,13 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		}
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_cc_propertyinst (title VARCHAR(255), namespace INT(11), inferred ENUM(\'true\',\'false\'))
-                    TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
+                    ENGINE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
 
 
 		$db->query( 'CREATE TEMPORARY TABLE smw_cc_properties_sub (property VARCHAR(255) '.$collation.' NOT NULL)
-                    TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
+                    ENGINE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
 		$db->query( 'CREATE TEMPORARY TABLE smw_cc_properties_super (property VARCHAR(255) '.$collation.' NOT NULL)
-                    TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
+                    ENGINE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
 
 		$db->query('INSERT INTO smw_cc_properties_super VALUES ('.$db->addQuotes($property->getDBkey()).')');
 
@@ -641,12 +641,12 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		}
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances (instance VARCHAR(255) '.$collation.', namespace INTEGER(11))
-                    TYPE=MEMORY', 'SMW::createVirtualTableWithInstances' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableWithInstances' );
 
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances_sub (category VARCHAR(255) '.$collation.' NOT NULL)
-                    TYPE=MEMORY', 'SMW::createVirtualTableWithInstances' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableWithInstances' );
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances_super (category VARCHAR(255) '.$collation.' NOT NULL)
-                    TYPE=MEMORY', 'SMW::createVirtualTableWithInstances' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableWithInstances' );
 
 		// initialize with direct instances
 		foreach($domainRangeAnnotations as $dr) {
