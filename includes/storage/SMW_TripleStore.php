@@ -647,8 +647,8 @@ class SMWTripleStore extends SMWStore {
             try {
                 $con = TSConnection::getConnector();
                 $con->connect();
-
-                $response = $con->query($query->getQueryString(), $this->serializeParams($query));
+                global $smwgTripleStoreGraph;
+                $response = $con->query($query->getQueryString(), $this->serializeParams($query), $smwgTripleStoreGraph);
                     
                 global $smwgSPARQLResultEncoding;
                 // PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in

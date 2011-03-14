@@ -336,7 +336,7 @@ class OB_StorageTS extends OB_Storage {
 			$dataSpace = $this->getDataSourceParameters();
 
 			// query
-			$response = $client->query("[[Category:$categoryName]]", "?Category|limit=$limit|offset=$offset|merge=false$dataSpace$metadataRequest");
+			$response = $client->query("[[Category:$categoryName]]", "?Category|limit=$limit|offset=$offset|merge=false$dataSpace$metadataRequest", $smwgTripleStoreGraph);
 
 			$categoryTitle = Title::newFromText($categoryName, NS_CATEGORY);
 			$titles = array();
@@ -463,7 +463,7 @@ class OB_StorageTS extends OB_Storage {
 			$metadataRequest = $metadata != false ? "|metadata=$metadata" : "";
 
 
-			$response = $client->query("SELECT ?p ?o WHERE { <$instanceURI> ?p ?o. }",  "limit=$limit|offset=$offset$metadataRequest");
+			$response = $client->query("SELECT ?p ?o WHERE { <$instanceURI> ?p ?o. }",  "limit=$limit|offset=$offset$metadataRequest", $smwgTripleStoreGraph);
 			$annotations = array();
 			$this->parseAnnotations($response, $annotations);
 
@@ -552,7 +552,7 @@ class OB_StorageTS extends OB_Storage {
 			$offset = $partition * $limit;
 
 			// query
-			$response = $client->query("[[$propertyName::+]]",  "?Category|limit=$limit|offset=$offset|merge=false");
+			$response = $client->query("[[$propertyName::+]]",  "?Category|limit=$limit|offset=$offset|merge=false", $smwgTripleStoreGraph);
 
 			$titles = array();
 			$this->parseInstances($response, $titles, NULL);
@@ -578,7 +578,7 @@ class OB_StorageTS extends OB_Storage {
 			$instanceURI = $p_array[0];
 
 			// query
-			$response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?cat WHERE { <$instanceURI> rdf:type ?cat.  }",  "");
+			$response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?cat WHERE { <$instanceURI> rdf:type ?cat.  }",  "", $smwgTripleStoreGraph);
 
 			$categories = array();
 			$this->parseCategories($response, $categories);
@@ -654,7 +654,7 @@ class OB_StorageTS extends OB_Storage {
 			}
 
 
-			$response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?s ?cat WHERE { ?s ?p ?o. OPTIONAL { ?s rdf:type ?cat. } $filter }",  "limit=1000");
+			$response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?s ?cat WHERE { ?s ?p ?o. OPTIONAL { ?s rdf:type ?cat. } $filter }",  "limit=1000", $smwgTripleStoreGraph);
 
 
 			$titles = array();
@@ -804,7 +804,7 @@ class OB_StorageTSQuad extends OB_StorageTS {
 
 
 
-			$response = $client->query("SELECT ?p ?o WHERE { <$instanceURI> ?p ?o. }",  "limit=$limit|offset=$offset$dataSpace$metadataRequest");
+			$response = $client->query("SELECT ?p ?o WHERE { <$instanceURI> ?p ?o. }",  "limit=$limit|offset=$offset$dataSpace$metadataRequest", $smwgTripleStoreGraph);
 			$annotations = array();
 			$this->parseAnnotations($response, $annotations);
 
@@ -834,7 +834,7 @@ class OB_StorageTSQuad extends OB_StorageTS {
 			$dataSpace = $this->getDataSourceParameters();
 
 			// query
-			$response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?s ?cat WHERE { ?s <$propertyURI> ?o. OPTIONAL { ?s rdf:type ?cat. } }",  "limit=$limit|offset=$offset$dataSpace$metadataRequest");
+			$response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?s ?cat WHERE { ?s <$propertyURI> ?o. OPTIONAL { ?s rdf:type ?cat. } }",  "limit=$limit|offset=$offset$dataSpace$metadataRequest", $smwgTripleStoreGraph);
 
 			$titles = array();
 			$this->parseInstances($response, $titles, NULL);
@@ -860,7 +860,7 @@ class OB_StorageTSQuad extends OB_StorageTS {
 			$dataSpace = $this->getDataSourceParameters();
 
 			// query
-			$response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?cat WHERE { <$instanceURI> rdf:type ?cat.  }",  "$dataSpace");
+			$response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?cat WHERE { <$instanceURI> rdf:type ?cat.  }",  "$dataSpace", $smwgTripleStoreGraph);
 
 			$categories = array();
 			$this->parseCategories($response, $categories);
@@ -907,7 +907,7 @@ class OB_StorageTSQuad extends OB_StorageTS {
 			}
 
 
-			$response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?s ?cat WHERE { ?s ?p ?o. OPTIONAL { ?s rdf:type ?cat. } $filter }",  "limit=1000$dataSpace");
+			$response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?s ?cat WHERE { ?s ?p ?o. OPTIONAL { ?s rdf:type ?cat. } $filter }",  "limit=1000$dataSpace", $smwgTripleStoreGraph);
 
 
 			$titles = array();
