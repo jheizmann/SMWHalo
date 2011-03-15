@@ -73,6 +73,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		$properties = array();
 
 		$results = $dom->xpath('//sparqlxml:result');
+		
 		foreach ($results as $r) {
 			$values = array();
 			$children = $r->children(); // binding nodes
@@ -81,7 +82,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			if ($sv == TSNamespaces::$RDF_NS."type") {
 				$property = SMWPropertyValue::makeProperty('_INST');
 			} else if ($sv == TSNamespaces::$RDFS_NS."subClassOf") {
-                $property = SMWPropertyValue::makeProperty('_SUBC');
+                $property = SMWPropertyValue::makeProperty('_INST');
             } else if ($sv == TSNamespaces::$RDFS_NS."subPropertyOf") {
                 $property = SMWPropertyValue::makeProperty('_SUBP');
             } else {
@@ -105,6 +106,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 					$value->setDBkeys(array($sv));
 					TSHelper::setMetadata($value, $sv->metadata);
 				}
+			
 				$semanticData->addPropertyObjectValue($property, $value);
 
 			}
@@ -124,7 +126,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			list($property, $value) = $this->readRecordPropertyValues($subject);
 			$semanticData->addPropertyObjectValue($property, $value);
 		}
-
+   
 		return $semanticData;
 	}
 
@@ -181,7 +183,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			if ($sv == TSNamespaces::$RDF_NS."type") {
 				$properties[] = SMWPropertyValue::makeProperty('_INST');
 			} else if ($sv == TSNamespaces::$RDFS_NS."subClassOf") {
-                $properties[] = SMWPropertyValue::makeProperty('_SUBC');
+                $properties[] = SMWPropertyValue::makeProperty('_INST');
             } else if ($sv == TSNamespaces::$RDFS_NS."subPropertyOf") {
                 $properties[] = SMWPropertyValue::makeProperty('_SUBP');
             } else {
@@ -246,7 +248,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			if ($sv == TSNamespaces::$RDF_NS."type") {
 				$properties[] = SMWPropertyValue::makeProperty('_INST');
 			} else if ($sv == TSNamespaces::$RDFS_NS."subClassOf") {
-                $properties[] = SMWPropertyValue::makeProperty('_SUBC');
+                $properties[] = SMWPropertyValue::makeProperty('_INST');
             } else if ($sv == TSNamespaces::$RDFS_NS."subPropertyOf") {
                 $properties[] = SMWPropertyValue::makeProperty('_SUBP');
             } else {
@@ -275,7 +277,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 		if ($property->getPropertyID() == '_INST') {
 			$property_iri = "<".TSNamespaces::$RDF_NS."type>";
-		} else if ($property->getPropertyID() == '_SUBC') {
+		} else if ($property->getPropertyID() == '_INST') {
             $property_iri = "<".TSNamespaces::$RDFS_NS."subClassOf>";
         } else if ($property->getPropertyID() == '_SUBP') {
             $property_iri = "<".TSNamespaces::$RDFS_NS."subPropertyOf>";
@@ -384,7 +386,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 		if ($property->getPropertyID() == '_INST') {
 			$property_iri = "<".TSNamespaces::$RDF_NS."type>";
-		} else if ($property->getPropertyID() == '_SUBC') {
+		} else if ($property->getPropertyID() == '_INST') {
             $property_iri = "<".TSNamespaces::$RDFS_NS."subClassOf>";
         } else if ($property->getPropertyID() == '_SUBP') {
             $property_iri = "<".TSNamespaces::$RDFS_NS."subPropertyOf>";
@@ -482,7 +484,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 		if ($property->getPropertyID() == '_INST') {
 			$propertyIRI = "<".TSNamespaces::$RDF_NS."type>";
-		} else if ($property->getPropertyID() == '_SUBC') {
+		} else if ($property->getPropertyID() == '_INST') {
             $propertyIRI = "<".TSNamespaces::$RDFS_NS."subClassOf>";
         } else if ($property->getPropertyID() == '_SUBP') {
             $propertyIRI = "<".TSNamespaces::$RDFS_NS."subPropertyOf>";
