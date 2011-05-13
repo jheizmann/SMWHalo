@@ -183,11 +183,11 @@ protected $smwUserMessages = array(
 	'smw_ob_invalidtitle' => '!!!fehlerhafter Titel!!!',
 	
 	/* Commands for ontology browser */
-	'smw_ob_cmd_createsubcategory' => 'Subkategorie hinzufügen',
-	'smw_ob_cmd_createsubcategorysamelevel' => 'Subkat. auf gleicher Ebene hinzufügen',
+	'smw_ob_cmd_createsubcategory' => 'Sub-Kategorie hinzufügen',
+	'smw_ob_cmd_createsubcategorysamelevel' => 'Kategorie hinzufügen',
 	'smw_ob_cmd_renamecategory' => 'Umbenennen',
-	'smw_ob_cmd_createsubproperty' => 'Subproperty hinzufügen',
-	'smw_ob_cmd_createsubpropertysamelevel' => 'Subprop. auf gleicher Ebene hinzufügen',
+	'smw_ob_cmd_createsubproperty' => 'Sub-Property hinzufügen',
+	'smw_ob_cmd_createsubpropertysamelevel' => 'Property hinzufügen',
 	'smw_ob_cmd_renameproperty' => 'Umbenennen',
 	'smw_ob_cmd_renameinstance' => 'Instanz umbenennen',
 	'smw_ob_cmd_deleteinstance' => 'Instanz löschen',
