@@ -2,7 +2,7 @@
 /**
  * @file
  * @ingroup SMWHaloQueryInterface
- * 
+ *
  * @defgroup SMWHaloQueryInterface SMWHalo Query Interface
  * @ingroup SMWHaloSpecials
  * @author Markus Nitsche
@@ -24,7 +24,7 @@ $smgJSLibs[]= 'json';
 class SMWQueryInterface extends SpecialPage {
     private $imagepath;     // image path for all QI icons
     private $datasources;
-    
+
 	public function __construct() {
 		parent::__construct('QueryInterface');
 	}
@@ -46,7 +46,7 @@ class SMWQueryInterface extends SpecialPage {
 
         $html .= '<div id="qiMaintabQueryCont">';
         $html .= $this->addQueryOption();
-        
+
 		$html .= $this->addQueryDefinition();
 
         $html .= $this->addResultPart();
@@ -57,7 +57,7 @@ class SMWQueryInterface extends SpecialPage {
         $html .= '<div id="qiMaintabLoadCont" style="display:none">';
         $html .= $this->addLoadQuery();
         $html .= '</div>';
-        
+
         if ($smwgDeployVersion) {
 		      $html .= '<script type="text/javascript" src="' . $smwgHaloScriptPath .  '/scripts/QueryInterface/deployQueryInterface.js"></script>';
         } else {
@@ -226,7 +226,7 @@ class SMWQueryInterface extends SpecialPage {
     }
     /**
      * Return html code for treeview of query.
-     * 
+     *
      * @return string html
      */
 	private function addTreeView() {
@@ -234,7 +234,7 @@ class SMWQueryInterface extends SpecialPage {
                     '<div id="treeanchor">' .
                         '<div id="qitreedummy"></div>' .
                     '</div>' .
-				'</div>';		
+				'</div>';
 	}
 
 	private function addDragbox() {
@@ -272,7 +272,7 @@ class SMWQueryInterface extends SpecialPage {
 
 		$resultoptionshtml = "";
         $resultPrinters = array();
-        
+
 		reset($smwgResultFormats);
 		while (current($smwgResultFormats)) {
 			if (!in_array(key($smwgResultFormats), $blacklist)) {
@@ -329,7 +329,7 @@ class SMWQueryInterface extends SpecialPage {
                     &nbsp;|&nbsp; <a href="javascript:void(0);" onclick="qihelper.previewQuery()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_fullpreview') . '\')">' . wfMsg('smw_qi_fullpreview') . '</a></div>
     				<div id="previewcontent"></div>
                 </div>';
-		
+
 	}
 
 	private function addAdditionalStuff() {
@@ -384,11 +384,13 @@ class SMWQueryInterface extends SpecialPage {
 			$lodDatasources .= " <span class=\"qiConnectionError\">".wfMsg("smw_ob_ts_not_connected")."</span>";
 		}
         else {
-            $ids = LODAdministrationStore::getInstance()->getAllSourceDefinitionIDs();
-            foreach ($ids as $sourceID) {
-                $this->datasources[] = $sourceID;
-                $sourceOptions .= "<option>$sourceID</option>";
-        	}
+            $ids = LODAdministrationStore::getInstance()->getAllSourceDefinitionIDsAndLabels();
+            foreach ($ids as $tuple) {
+				list($sourceID, $sourceLabel) = $tuple;
+                $label = trim($sourceLabel);
+                $this->datasources[$sourceID] = strlen($label) > 0 ? $label : $sourceID;
+				$sourceOptions .= "<option value=\"$sourceID\">$label</option>";
+			}
         }
         $lodDatasources .= '<br/><table><tr><td>' .
             '<select id="qidatasourceselector" size="5" multiple="true" onchange="qihelper.clickUseTsc();">' .
@@ -421,7 +423,7 @@ class SMWQueryInterface extends SpecialPage {
                 $paramText .= '<div id="qitpeeparams_'.$policyIds[$i].'" style="display:none"><table>';
                 foreach ($params as $param) {
                     if (! $param->getName() ) continue;
-                    $paramText .= 
+                    $paramText .=
                             '<tr><td>'.
                             ( ($param->getLabel())
                                 ? '<span name="qitpeeparams_'.$policyIds[$i].'_'.$param->getName().'">'.$param->getLabel().'</span>'
@@ -443,7 +445,7 @@ class SMWQueryInterface extends SpecialPage {
             return '<div id="qiTpeeSelected" style="display:none"><hr />'.wfMsg('smw_qi_tpee_header') .':<br/>'.
                    '<table><tr><td>'.$text.'</td><td>'.$paramText.'</td></tr></table></div>';
         }
-        
+
         return '';
     }
     private function getInputFieldTpeeParam($policyId, $paramName) {
@@ -455,8 +457,8 @@ class SMWQueryInterface extends SpecialPage {
         if ($paramName == 'PAR_ORDER') {
             $html= '<div class="qitpeeparamval">'.
                    '<table id="qitpeeparamval_'.$policyId.'_'.$paramName.'">';
-            foreach ($this->datasources as $ds) {
-                $html .= '<tr><td onclick="qihelper.tpeeOrderSelect(this);">'.$ds.'</td></tr>';
+            foreach (array_keys($this->datasources) as $ds) {
+                $html .= '<tr><td _sourceid="'.$ds.'" onclick="qihelper.tpeeOrderSelect(this);">'.$this->datasources[$ds].'</td></tr>';
             }
             $html.='</table>'.
                    '</div>'.
@@ -466,7 +468,7 @@ class SMWQueryInterface extends SpecialPage {
                    '</span>';
             return $html;
         }
-        return '<input id="qitpeeparamval_'.$policyId.'_'.$paramName.'" type="text" size="20"/>';    
+        return '<input id="qitpeeparamval_'.$policyId.'_'.$paramName.'" type="text" size="20"/>';
     }
 
 }
