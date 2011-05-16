@@ -2,7 +2,7 @@
  * @file
  * @ingroup SMWHaloSpecials
  * @ingroup SMWHaloQueryInterface
- * 
+ *
  *  Query Interface for Semantic MediaWiki
  *  Developed by Markus Nitsche <fitsch@gmail.com>
  *
@@ -55,7 +55,7 @@ QIHelper.prototype = {
         this.DS_SELECTED = 0;
         this.TPEE_SELECTED = 1;
         this.propertyAddClicked = false;
-        
+
         $('qistatus').innerHTML = gLanguage.getMessage('QI_START_CREATING_QUERY');
         if (! this.noTabSwitch) this.switchTab(1, true);
         this.sourceChanged = 0;
@@ -226,24 +226,21 @@ QIHelper.prototype = {
         if (! table) return;
         for (var i = 0; i < table.rows.length; i++) {
             if (table.rows[i].cells[0].className == 'qiTpeeSelected') {
-                if (move == 'up' && i > 0) {
-                    var html = table.rows[i].cells[0].innerHTML;
-                    table.deleteRow(i);
-                    var row = table.insertRow(i-1);
-                    var cell = row.insertCell(0);
-                    cell.className = 'qiTpeeSelected';
-                    cell.innerHTML = html;
-                    break;
-                }
-                if (move == 'down' && i < table.rows.length -1) {
-                    var html = table.rows[i].cells[0].innerHTML;
-                    table.deleteRow(i);
-                    var row = table.insertRow(i+1);
-                    var cell = row.insertCell(0);
-                    cell.className = 'qiTpeeSelected';
-                    cell.innerHTML = html;
-                    break;
-                }
+                var newRow = -1;
+                if (move == 'up' && i > 0)
+                    newRow = i - 1;
+                if (move == 'down' && i < table.rows.length -1)
+                    newRow = i + 1;
+                if (newRow == -1) break;
+                var html = table.rows[i].cells[0].innerHTML;
+                var sourceId = table.rows[i].cells[0].getAttribute('_sourceid');
+                table.deleteRow(i);
+                var row = table.insertRow(newRow);
+                var cell = row.insertCell(0);
+                cell.className = 'qiTpeeSelected';
+                cell.setAttribute('_sourceid', sourceId);
+                cell.innerHTML = html;
+                break;
             }
         }
         this.clickUseTsc(); // updates source and preview
@@ -257,7 +254,7 @@ QIHelper.prototype = {
         }
         el.className="qiTpeeSelected";
     },
-    
+
 	/**
 	 * Called whenever preview result printer needs to be updated.
      * This is only done, if the results are visible.
@@ -275,7 +272,7 @@ QIHelper.prototype = {
         if ($('qiDefTab3').className.indexOf('qiDefTabActive') > -1)
             this.showFullAsk('parser', false);
     },
-    
+
     updateSrcAndPreview : function() {
         this.updateQuerySource();
         this.updatePreview();
@@ -345,7 +342,7 @@ QIHelper.prototype = {
                     this.parameterPendingElement.remove();
                 this.parameterPendingElement = new OBPendingIndicator($('querylayout'));
                 this.parameterPendingElement.show();
-        
+
 		sajax_do_call('smwf_qi_QIAccess', [ 'getSupportedParameters', qp ],
 				callback.bind(this));
 
@@ -396,7 +393,7 @@ QIHelper.prototype = {
 
 	/**
 	 * Save all numeric datatypes into an associative array
-	 * 
+	 *
 	 * @param request
 	 *            Request of AJAX call
 	 */
@@ -412,7 +409,7 @@ QIHelper.prototype = {
 	/**
 	 * Add a new query. This happens everytime a user adds a property with a
 	 * subquery
-	 * 
+	 *
 	 * @param parent
 	 *            ID of parent query
 	 * @param name
@@ -427,7 +424,7 @@ QIHelper.prototype = {
 	 * Insert a query, works similar to add query but a given index is replaced
 	 * with the new query data. This is needed when parsing the ask query string
 	 * and creating the query objects in the QI.
-	 * 
+	 *
 	 * @param parent
 	 *            ID of parent query
 	 * @param name
@@ -444,7 +441,7 @@ QIHelper.prototype = {
 
 	/**
 	 * Set a certain query as active query.
-	 * 
+	 *
 	 * @param id
 	 *            IS of the query to switch to
 	 */
@@ -520,7 +517,7 @@ QIHelper.prototype = {
 			this.queries[0].getDisplayStatements().each(function(s) {
 				ask += "|?" + s
 			});
-			
+
 			var params = ask.replace(/,/g, '%2C') + ",";
 			var reasonerAndDs = this.getReasonerAndParams();
 			if (reasonerAndDs.length > 0)
@@ -611,13 +608,13 @@ QIHelper.prototype = {
 
 	/**
 	 * Displays the preview created by the server
-	 * 
+	 *
 	 * @param request
 	 *            Request of AJAX call
 	 */
 	openPreview : function(request) {
 		 switch ($('layout_format').value) {
-            
+
             // for certain query printer it is
             // necessary to clear content of preview
             case 'ofc-pie':
@@ -633,22 +630,22 @@ QIHelper.prototype = {
 
 	/**
 	 * Displays the preview created by the server
-	 * 
+	 *
 	 * @param request
 	 *            Request of AJAX call
 	 */
 	openResultPreview : function(request) {
 		this.pastePreview(request, $('previewcontent'));
 	},
-	
+
 	pastePreview: function(request, preview) {
 		this.pendingElement.hide();
-        
+
         // pre-processing
         var resultHTML;
         var resultCode;
         switch ($('layout_format').value) {
-            
+
             case 'ofc-pie':
             case 'ofc-bar':
             case 'ofc-bar_3d':
@@ -657,16 +654,16 @@ QIHelper.prototype = {
             var tuple =  request.responseText.split("|||");
             resultHTML = tuple[0];
             resultCode = tuple[1];
-            
+
             break;
         default:
             resultHTML = request.responseText;
             resultCode = null;
         }
-        
+
         preview.innerHTML = resultHTML;
         $('fullpreviewbox').width = ''; // clear fixed width if we had a timeline
-        
+
         smw_tooltipInit();
 
         // post processing of javascript for resultprinters:
@@ -705,7 +702,7 @@ QIHelper.prototype = {
 	 * timeline div with id="previewcontent" innerHtml is changed directly
 	 */
 	parseWikilinks2Html : function() {
-		
+
 		if ($('layout_link') != null && $('layout_link').value == "none")
 			return;
 		var text = $('previewcontent').innerHTML;
@@ -741,7 +738,7 @@ QIHelper.prototype = {
 	/**
 	 * Update breadcrumb navigation on top of the query tree. The BN will show
 	 * the active query and all its parents as a mean to navigate
-	 * 
+	 *
 	 * @param id
 	 *            ID of the active query
 	 */
@@ -894,7 +891,7 @@ QIHelper.prototype = {
                 var jsonParams = [];
                 for (var i = 0; i < span.length; i++) {
                     var pname = (span[i].name) ? span[i].name.replace('qitpeeparams_ ' + tpee + '_', '') : span[i].innerHTML;
-                    var val = $('qitpeeparamval_' + tpee + '_' + pname) && 
+                    var val = $('qitpeeparamval_' + tpee + '_' + pname) &&
                         ( $('qitpeeparamval_' + tpee + '_' + pname).value || $('qitpeeparamval_' + tpee + '_' + pname).innerHTML);
                     if (pname && val) {
                         if (pname == 'PAR_USER') {
@@ -905,7 +902,7 @@ QIHelper.prototype = {
                             var table = $('qitpeeparamval_' + tpee + '_' + pname);
                             for (var r = 0; r < table.rows.length; r++) {
                                 // vars need to be in double quotes
-                                vals.push('\\"' + table.rows[r].cells[0].innerHTML + '\\"');
+                                vals.push('\\"' + table.rows[r].cells[0].getAttribute('_sourceid') + '\\"');
                             }
                             if (vals.length > 0) {
                                 val = '[' + vals.join(',') + ']';
@@ -937,7 +934,7 @@ QIHelper.prototype = {
 	/**
 	 * Recursive function that creates the ask syntax for the query with the ID
 	 * provided and all its subqueries
-	 * 
+	 *
 	 * @param id
 	 *            ID of query to start
 	 */
@@ -1001,7 +998,7 @@ QIHelper.prototype = {
 
 	/**
 	 * Creates a new dialogue for adding categories to the query
-	 * 
+	 *
 	 * @param reset
 	 *            indicates if this is a new dialogue or if it is loaded from
 	 *            the tree
@@ -1032,7 +1029,7 @@ QIHelper.prototype = {
 		cell.innerHTML = '<a href="javascript:void(0)" onclick="qihelper.addDialogueInput()">'
             + gLanguage.getMessage('QI_BC_ADD_OTHER_CATEGORY') + '</a>';
 		$('dialoguebuttons').style.display = "inline";
-        $('dialoguebuttons').getElementsByTagName('button').item(0).innerHTML = 
+        $('dialoguebuttons').getElementsByTagName('button').item(0).innerHTML =
             gLanguage.getMessage((reset) ? 'QI_BUTTON_ADD' : 'QI_BUTTON_UPDATE');
 		autoCompleter.registerAllInputs();
 		if (reset)
@@ -1042,7 +1039,7 @@ QIHelper.prototype = {
 
 	/**
 	 * Creates a new dialogue for adding instances to the query
-	 * 
+	 *
 	 * @param reset
 	 *            indicates if this is a new dialogue or if it is loaded from
 	 *            the tree
@@ -1057,7 +1054,7 @@ QIHelper.prototype = {
         if (this.activeQuery.categories.length > 0) {
         	catConstraint = "ask:";
         	var categories = this.activeQuery.categories;
-        	categories.each(function(c) { 
+        	categories.each(function(c) {
         		catConstraint += '[[' + gLanguage.getMessage('CATEGORY_NS',
 				'cont') + c + ']]';
         	});
@@ -1088,7 +1085,7 @@ QIHelper.prototype = {
 
 	/**
 	 * Creates a new dialogue for adding properties to the query
-	 * 
+	 *
 	 * @param reset
 	 *            indicates if this is a new dialogue or if it is loaded from
 	 *            the tree
@@ -1100,12 +1097,12 @@ QIHelper.prototype = {
 		this.activeDialogue = "property";
 		this.propname = "";
         this.resetDialogueContent();
-        
+
         // first table, with at least one input field for property name
         this.addPropertyChainInput();
 
         this.completePropertyDialogue();
-       
+
 		$('dialoguebuttons').style.display = "inline";
         $('dialoguebuttons').getElementsByTagName('button').item(0).innerHTML =
             gLanguage.getMessage((reset) ? 'QI_BUTTON_ADD' : 'QI_BUTTON_UPDATE');
@@ -1138,13 +1135,13 @@ QIHelper.prototype = {
         // calculate index of current field
         var idx = $('dialoguecontent').rows.length;
         if (idx > 0) idx = (idx - 1) / 2;
-        
+
         // check if this is an element of a property chain
         if  (idx > 0) {
             var pName = $('input_p'+(idx-1)).value;
             if (this.propRange[pName.toLowerCase()]) {
                 constraintsCategories = this.propRange[pName.toLowerCase()];
-            } 
+            }
         }
 		if (constraintsCategories.length == 0) {
             constraintsCategories = this.getCategoryConstraints();
@@ -1259,12 +1256,12 @@ QIHelper.prototype = {
 			else if (this.propRange[this.propname.toLowerCase()])
 			    ac_constraint = 'instance-property-range: '+propNameAC;
     		else
-    		    ac_constraint += '|namespace: 0'; 
+    		    ac_constraint += '|namespace: 0';
         } else if (ptype == '_dat') { // property type = date
             ac_constraint = 'fixvalues: {{NOW}},{{TODAY}}|annotation-value: '+propNameAC;
             numericType= 1;
         } else if (ptype == '_str') {
-            numericType= 2;		    
+            numericType= 2;
 		} // else property, no page type and no date type, use defaults as set above.
         cell = newrow.insertCell(1);
 		cell.innerHTML = this.createRestrictionSelector("=", false, numericType);
@@ -1298,10 +1295,10 @@ QIHelper.prototype = {
                     var oSelect = document.createElement("SELECT");
                     oSelect.id = "input_ru" + newRowIndex;
                     for (var i = 0, m = this.propUnits[uIdx].length; i < m; i++) {
-                        oSelect.options[i] = 
+                        oSelect.options[i] =
                             new Option(this.propUnits[uIdx][i], this.propUnits[uIdx][i]);
                     }
-                    cell.appendChild(oSelect);        
+                    cell.appendChild(oSelect);
                 }
             } catch (e) {};
 		}
@@ -1372,7 +1369,7 @@ QIHelper.prototype = {
 		this.activeInputs = 0;
         this.updateBreadcrumbs(this.activeQueryId);
 	},
-    
+
 	/**
 	 * Add another input to the current dialogue
 	 */
@@ -1407,7 +1404,7 @@ QIHelper.prototype = {
 
 	/**
 	 * Removes an input if the remove icon is clicked
-	 * 
+	 *
 	 * @param el
 	 *           DOMnode of the image element, which is in a table row
      *           that will be deleted
@@ -1467,7 +1464,7 @@ QIHelper.prototype = {
 	 * Receives an XML string containing schema information of a property.
 	 * Depending on this information, the dialogue has to be adapted. You need
 	 * to consider: arity, enumeration and type of property.
-	 * 
+	 *
 	 * @param request
 	 *            Request of the ajax call
 	 */
@@ -1591,12 +1588,12 @@ QIHelper.prototype = {
                     $('input_c4').outerHTML = '<select id="input_c4"></select>';
                     $('input_c4d').style.display = 'none';
                 }
-				
+
    				// special input field for enums
 				if (possibleValues.length > 0) { // enumeration
 					this.propIsEnum = true;
 					this.enumValues = new Array();
-					
+
 					for ( var i = 0; i < possibleValues.length; i++) {
 						this.enumValues.push(possibleValues[i]); // save
 																	// enumeration
@@ -1605,7 +1602,7 @@ QIHelper.prototype = {
 																	// use
 					}
 				}
-                
+
                 // if binary property, make an 'insert subquery' checkbox
 				if (parameterTypes[0] == '_wpg') {
 					$('dialoguecontent_pradio').getElementsByTagName('input')[2].value = oldsubid;
@@ -1720,7 +1717,7 @@ QIHelper.prototype = {
             $('input_c1').onclick = function() {qihelper.toggleShowProperty();}
         else
             $('input_c1').disabled = "disabled";
-            
+
         // hr line
         node = document.createElement('hr');
         $('dialoguecontent').parentNode.parentNode.appendChild(node);
@@ -1749,7 +1746,7 @@ QIHelper.prototype = {
         // add onclick handler for changing the value (IE won't accept onchange)
         var radiobuttons = $('dialoguecontent_pradio').getElementsByTagName('input');
         for (var i = 0; i < radiobuttons.length; i++)
-            radiobuttons[i].onclick = function() {qihelper.setPropertyRestriction();} 
+            radiobuttons[i].onclick = function() {qihelper.setPropertyRestriction();}
     },
 
     /**
@@ -1821,7 +1818,7 @@ QIHelper.prototype = {
 	/**
 	 * Loads values of an existing category group. This happens if a users
 	 * clicks on a category folder in the query tree.
-	 * 
+	 *
 	 * @param id
 	 *            id of the category group (saved with the query tree)
      * @param focus
@@ -1844,7 +1841,7 @@ QIHelper.prototype = {
 	/**
 	 * Loads values of an existing instance group. This happens if a users
 	 * clicks on an instance folder in the query tree.
-	 * 
+	 *
 	 * @param id
 	 *            id of the instace group (saved with the query tree)
      * @param focus
@@ -1867,7 +1864,7 @@ QIHelper.prototype = {
 	 * Loads values of an existing property group. This happens if a users
 	 * clicks on a property folder in the query tree. WARNING: This is a MESS!
 	 * Don't change anything unless you really know what you are doing.
-	 * 
+	 *
 	 * @param id
 	 *            id of the property group (saved with the query tree)
 	 * @todo find a better way to do this
@@ -1933,7 +1930,7 @@ QIHelper.prototype = {
                 if (prop.supportsUnits() && this.proparity == 2) {
                     $('input_c4').value = prop.getShowUnit();
                     for (var i = 0; i < this.propUnits[0].length; i++) {
-                        $('input_c4').options[i]= 
+                        $('input_c4').options[i]=
                             new Option(this.propUnits[0][i],this.propUnits[0][i]);
                         if (prop.getShowUnit() == this.propUnits[0][i])
                             $('input_c4').options[i].selected = "selected";
@@ -1984,7 +1981,7 @@ QIHelper.prototype = {
                 if (!acChange)
                     autoCompleter.deregisterAllInputs();
                 acChange = true;
-                
+
                 // add unit selection, do this for all properties, even in subqueries
                 try {
                     var propUnits = prop.getUnits();
@@ -2007,10 +2004,10 @@ QIHelper.prototype = {
             if (acChange) autoCompleter.registerAllInputs();
         }
 		$('qidelete').style.display = "inline";
-		
+
 		if (!prop.isEnumeration()) this.restoreAutocompletionConstraints();
 	},
-	
+
 	 restoreAutocompletionConstraints : function() {
          var idx = ($('dialoguecontent').rows.length -1) / 2 - 1;
          var propname = $('input_p'+idx).value;
@@ -2026,7 +2023,7 @@ QIHelper.prototype = {
                     .bind(this));
         }
     },
-    
+
     restoreAutocompletionConstraintsCallback: function(request) {
     	autoCompleter.deregisterAllInputs();
     	   if (request.status == 200) {
@@ -2049,9 +2046,9 @@ QIHelper.prototype = {
                             .push(schemaData.documentElement.childNodes[i]
                                     .getAttribute("type"));
                     var range = schemaData.documentElement.childNodes[i].getAttribute("range");
-                    if (range) ranges.push(range);          
+                    if (range) ranges.push(range);
                 }
-                
+
 	                // Special treatment: binary properties support conjunction,
 	                // therefore we need an "add" button
 	                var idx = ($('dialoguecontent').rows.length -1) / 2 - 1;
@@ -2074,9 +2071,9 @@ QIHelper.prototype = {
 	                	$('input_r'+i).setAttribute("constraints", ac_constraint);
 	                	i++;
 	                }
-                
+
             }
-    
+
     	autoCompleter.registerAllInputs();
     	//this.pendingElement.hide();
     },
@@ -2144,7 +2141,7 @@ QIHelper.prototype = {
 
 	/**
 	 * Recursively deletes all subqueries of a given query
-	 * 
+	 *
 	 * @param id
 	 *            ID of the query to start with
 	 */
@@ -2192,7 +2189,7 @@ QIHelper.prototype = {
 
 	/**
 	 * Creates an HTML option with the different possible restrictions
-	 * 
+	 *
 	 * @param disabled
 	 *            enabled only for numeric datatypes
 	 * @param type
@@ -2203,7 +2200,7 @@ QIHelper.prototype = {
 	createRestrictionSelector : function(option, disabled, type) {
 		var html = disabled ? '<select disabled="disabled">' : '<select>';
 		var optionsFunc = function(op) {
-			
+
 			var escapeXMLEntities =  function(xml) {
 		        var result = xml.replace(/</g, '&lt;');
 		        result = result.replace(/>/g, '&gt;');
@@ -2215,7 +2212,7 @@ QIHelper.prototype = {
             html += '<option value="'+esc_op+'" '+selected+'>'+op[1] + ' ('+esc_op+')</option>';
 		}
 		if (type == 1) {
-			[ 
+			[
                 ["=", gLanguage.getMessage('QI_EQUAL') ],
                 [">=", gLanguage.getMessage('QI_GT') ],
                 ["<=", gLanguage.getMessage('QI_LT') ],
@@ -2233,7 +2230,7 @@ QIHelper.prototype = {
                 ["!", gLanguage.getMessage('QI_NOT') ]
             ].each(optionsFunc);
         }
-		
+
 		return html + "</select>";
 	},
 
@@ -2256,7 +2253,7 @@ QIHelper.prototype = {
             return -1;
         return val;
     },
-	
+
 	/**
 	 * Adds a new Category/Instance/Property Group to the query
 	 */
@@ -2312,7 +2309,7 @@ QIHelper.prototype = {
                 this.emptyDialogue();
                 $('qistatus').innerHTML = gLanguage.getMessage('QI_INST_ADDED_SUCCESSFUL');
             }
-                        			
+
 		}
 	},
 
@@ -2399,7 +2396,7 @@ QIHelper.prototype = {
 					var paramvalue = $('dialoguecontent_pvalues').rows[i].cells[2].firstChild.value;
                 } catch (e) {continue;}
                 // no value is replaced by "*" which means all values
-				paramvalue = paramvalue == "" ? "*" : paramvalue; 
+				paramvalue = paramvalue == "" ? "*" : paramvalue;
 				var paramname;
                 if (arity == 2) {
                     paramname = $('dialoguecontent').rows[$('dialoguecontent').rows.length -2].cells[1].innerHTML;
@@ -2744,12 +2741,12 @@ QIHelper.prototype = {
 	},
 
 	checkFormat : function() {
-		
+
 		// update result preview
 		this.getSpecialQPParameters($('layout_format').value);
 		this.updateSrcAndPreview();
 	},
-    
+
     /**
      * called when the Query Tree tab is clicked and the Query source tab is still active
      */
@@ -2765,11 +2762,11 @@ QIHelper.prototype = {
 
 	initFromQueryString : function(ask) {
 		this.doReset();
-   
+
 		// does ask contain any data?
 		if (ask.replace(/^\s+/, '').replace(/\s+$/, '').length == 0)
 			return;
-        
+
         // check triplestore switch if it comes from sparql parser function
 		if (ask.indexOf('#sparql:') != -1) {
             // check if this is really a sparq query and add send a warning to the user
@@ -2779,7 +2776,7 @@ QIHelper.prototype = {
             }
 			var triplestoreSwitch = $('usetriplestore');
 			if (triplestoreSwitch) triplestoreSwitch.checked = true;
-		}	
+		}
 
 		// split of query parts to handle subqueries seperately
 		var sub = this.splitQueryParts(ask);
@@ -2883,7 +2880,7 @@ QIHelper.prototype = {
 		this.updateColumnPreview(); // update sort selection
 		this.updatePreview(); // update result preview
     },
-    
+
     savePropertyInformation : function(xml) {
         var xmlDoc = GeneralXMLTools
                 .createDocumentFromString(xml);
@@ -3154,7 +3151,7 @@ handleQueryString : function(args, queryId, pMustShow) {
                 pgroup = new PropertyGroup(escapeQueryHTML(pMustShow[i][0]),
                      2, true, false, null, null, -1,
                      pMustShow[i][1], pMustShow[i][2]);
-            
+
             // we have this property for the first time and it exists also in the query condition
             // then merge the conditions and must show settings into one property group
 		    var oldPgroup = propList.getPgroup(pMustShow[i][0]); // get information about property
@@ -3222,11 +3219,11 @@ applyOptionParams : function(query) {
             var kv = options[i].replace(/^\s*(.*?)\s*$/, '$1').split(/=/);
             if (kv.length == 1)
                 continue;
-            
+
             var key = kv[0].replace(/^\s*(.*?)\s*$/, '$1');
             var val = kv[1].replace(/^\s*(.*?)\s*$/, '$1');
             if (key=="format")
-            	format = val;	
+            	format = val;
             else if (key=="sort")
                 this.sortColumn = val;
             else if (key=='queryname')
@@ -3286,7 +3283,7 @@ applyOptionParams : function(query) {
                     var orderValues = [];
                     var parOrderArr = JSON.parse(tpeeParamsObj.PAR_ORDER);
                     for (var t = 0; t < table.rows.length; t++) {
-                        orderValues.push(table.rows[t].cells[0].innerHTML);
+                        orderValues.push(table.rows[t].cells[0].getAttribute('_sourceid'));
                         table.deleteRow(t);
                         t--;
                     }
@@ -3295,6 +3292,7 @@ applyOptionParams : function(query) {
                             var row = table.insertRow(-1);
                             var cell = row.insertCell(-1);
                             cell.setAttribute('onclick', "qihelper.tpeeOrderSelect(this)");
+                            cell.setAttribute('_sourceid', parOrderArr[t]);
                             cell.innerHTML = parOrderArr[t];
                         }
                     }
@@ -3303,6 +3301,7 @@ applyOptionParams : function(query) {
                             var row = table.insertRow(-1);
                             var cell = row.insertCell(-1);
                             cell.setAttribute('onclick', "qihelper.tpeeOrderSelect(this)");
+                            cell.setAttribute('_sourceid', orderValues[t]);
                             cell.innerHTML = orderValues[t];
                         }
                     }
@@ -3312,13 +3311,13 @@ applyOptionParams : function(query) {
                 $('qitpeeparamval_' + tpeePolicyId + '_' + parname).value = tpeeParamsObj[parname];
         }
     }
-	
+
 
     // The following callback is called after the query printer parameters were displayed.
 	var callback = function() {
 		// start by 1, first element is the query itself
 		for ( var i = 1; i < options.length; i++) {
-			
+
 			var kv = options[i].replace(/^\s*(.*?)\s*$/, '$1').split(/=/);
 			if (kv.length == 1)
 				continue;
@@ -3343,10 +3342,10 @@ applyOptionParams : function(query) {
 			}
 		}
 	}
-	
+
 	// and request according format printer parameters
     this.getSpecialQPParameters(format, callback.bind(this));
-	
+
 	// return the properties, that must be shown in the query
 	return mustShow;
 },
@@ -3535,7 +3534,7 @@ PropertyList.prototype = {
 		}
 		return;
 	},
-    
+
     getPgroupById : function(i) {
         if (this.length > i)
     		return this.pgroup[i];
@@ -3562,13 +3561,13 @@ PropertyList.prototype = {
 				return this.type[i];
 		}
 	},
-	
+
     getRange : function(name) {
         for ( var i = 0; i < this.name.length; i++) {
             if (this.name[i] == name)
                 return this.range[i];
         }
-    },	
+    },
 
     supportsUnits : function(name) {
 		for ( var i = 0; i < this.name.length; i++) {
@@ -3583,7 +3582,7 @@ Event.observe(window, 'load', initialize_qi);
 function initialize_qi() {
 	if (!qihelper)
 		qihelper = new QIHelper();
-		
+
 }
 
 function initialize_qi_from_querystring(ask) {
