@@ -541,7 +541,8 @@ class SMWOntologyBrowserXMLGenerator {
 				} else {
 					// small hack for datetime type. It may occur that there is a T at the end.
 					if ($smwValue->getTypeID() == '_dat') {
-						$val = array_shift($smwValue->getDBkeys());
+						$dbkeys = $smwValue->getDBkeys();
+						$val = array_shift($dbkeys);
 						$xsdValue = (substr($val, -1) == 'T') ? str_replace('T', '', $val) : $val;
 					} else {
 						$dbkeys = $smwValue->getDBkeys();
