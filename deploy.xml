@@ -2,7 +2,7 @@
 <deploydescriptor>
 	<global>
 		<version>153</version>
-		<patchlevel>4</patchlevel>
+		<patchlevel>5</patchlevel>
 		<id>smwhalo</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<maintainer>Ontoprise GmbH</maintainer>
