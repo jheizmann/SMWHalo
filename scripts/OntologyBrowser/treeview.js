@@ -276,11 +276,18 @@ var transformer = new TreeTransformer(
 		"/extensions/SMWHalo/skins/OntologyBrowser/treeview.xslt");
 
 function resetOntologyBrowser() {
+
+	// set content of category and property view invalid
+	dataAccess.OB_categoriesInitialized = false;
+	dataAccess.OB_attributesInitialized = false;
 	
-	// reset category or property view
-	dataAccess.initializeRootCategories(0, true);
-	dataAccess.initializeRootProperties(0, true);
-	
+	// refresh the currently visible tree
+	if (globalActionListener.activeTreeName == 'categoryTree') {
+		dataAccess.initializeRootCategories(0, true);
+	} else if (globalActionListener.activeTreeName == 'propertyTree'){
+		dataAccess.initializeRootProperties(0, true);
+	}
+
 	if ($('instanceList') != null && $('instanceList').down() != null) {
 		$('instanceList').down().remove();
 	}
