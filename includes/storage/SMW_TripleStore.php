@@ -140,6 +140,7 @@ class SMWTripleStore extends SMWStore {
 	}
 
 	function doDataUpdate(SMWSemanticData $data) {
+		wfProfileIn( "SMWTripleStore::doDataUpdate (SMWHalo)" );
 		$this->smwstore->updateData($data);
 
 		// update rules in internal store
@@ -154,6 +155,7 @@ class SMWTripleStore extends SMWStore {
 		}
 		// make sure that TS is not update in maintenace mode
 		if ( defined( 'DO_MAINTENANCE' ) && !defined('SMWH_FORCE_TS_UPDATE') ) {
+			wfProfileOut( "SMWTripleStore::doDataUpdate (SMWHalo)" );
 			return;
 		}
 		$triples = array();
@@ -165,6 +167,7 @@ class SMWTripleStore extends SMWStore {
 
 		if (isset($smwgUpdateTSOnNamespaces) && is_array($smwgUpdateTSOnNamespaces)) {
 			if (!in_array($subject->getNamespace(), $smwgUpdateTSOnNamespaces)) {
+				wfProfileOut( "SMWTripleStore::doDataUpdate (SMWHalo)" );
 				return;
 			}
 		}
@@ -229,6 +232,7 @@ class SMWTripleStore extends SMWStore {
 		} catch(Exception $e) {
 			// print something??
 		}
+		wfProfileOut( "SMWTripleStore::doDataUpdate (SMWHalo)" );
 	}
 
 	/**
@@ -644,10 +648,12 @@ class SMWTripleStore extends SMWStore {
 	function doGetQueryResult(SMWQuery $query) {
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
 
-
+        wfProfileIn( "SMWTripleStore::doGetQueryResult (SMWHalo)" );
 		// make sure that TS is not queried in maintenace mode
 		if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
-			return $this->smwstore->getQueryResult($query);
+			$qresult = $this->smwstore->getQueryResult($query);
+			wfProfileOut( "SMWTripleStore::doGetQueryResult (SMWHalo)" );
+			return $qresult;
 		}
 
 		$toTSC = false; // redirects a normal ASK query to the TSC
@@ -678,6 +684,7 @@ class SMWTripleStore extends SMWStore {
 			if ($query->getQueryString() == "") {
 				$sqr = new SMWHaloQueryResult(array(), $query, array(), $this, false);
 				$sqr->addErrors(array(wfMsg('smw_tsc_query_not_allowed')));
+				wfProfileOut( "SMWTripleStore::doGetQueryResult (SMWHalo)" );
 				return $sqr;
 			}
 			try {
@@ -698,8 +705,10 @@ class SMWTripleStore extends SMWStore {
 
 				// Allow extensions to transform the query result before it is
 				// parsed.
+				wfProfileIn( "SMWTripleStore::doGetQueryResult (SMWHalo): Hook 'ProcessSPARQLXMLResults'" );
 				wfRunHooks('ProcessSPARQLXMLResults', array(&$query, &$response) );
-
+                wfProfileOut( "SMWTripleStore::doGetQueryResult (SMWHalo): Hook 'ProcessSPARQLXMLResults'" );
+                
 				$queryResult = $this->parseSPARQLXMLResult($query, $response);
 
 
@@ -726,6 +735,7 @@ class SMWTripleStore extends SMWStore {
 						//return $this->smwstore->getQueryResult($query);
 
 				}
+				wfProfileOut( "SMWTripleStore::doGetQueryResult (SMWHalo)" );
 				return $sqr;
 			}
 
@@ -738,18 +748,25 @@ class SMWTripleStore extends SMWStore {
 				default:
 					if (is_array($queryResult)) {
 						foreach ($queryResult as $key => $qr) {
+							wfProfileIn( "SMWTripleStore::doGetQueryResult (SMWHalo): Hook 'ProcessQueryResults'" );
 							wfRunHooks('ProcessQueryResults', array(&$query, &$queryResult[$key]));
+							wfProfileOut( "SMWTripleStore::doGetQueryResult (SMWHalo): Hook 'ProcessQueryResults'" );
 						}
 					} else {
+						wfProfileIn( "SMWTripleStore::doGetQueryResult (SMWHalo): Hook 'ProcessQueryResults'" );
 						wfRunHooks('ProcessQueryResults', array(&$query, &$queryResult) );
+						wfProfileOut( "SMWTripleStore::doGetQueryResult (SMWHalo): Hook 'ProcessQueryResults'" );
 					}
 					break;
 			}
+			wfProfileOut( "SMWTripleStore::doGetQueryResult (SMWHalo)" );
 			return $queryResult;
 
 		} else {
 			// redirect query to the default SMW implementation
-			return $this->smwstore->getQueryResult($query);
+			$qresult = $this->smwstore->getQueryResult($query);
+            wfProfileOut( "SMWTripleStore::doGetQueryResult (SMWHalo)" );
+            return $qresult;
 		}
 	}
 
