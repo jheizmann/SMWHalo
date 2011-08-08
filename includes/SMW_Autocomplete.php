@@ -318,12 +318,14 @@ class AutoCompletionRequester {
 
 				$parents = $title->getParentCategoryTree();
 				$matches[$i]['parentCategories'] = array();
-
-				$next = reset(array_keys($parents));
+                
+				$keys = array_keys($parents);
+				$next = reset($keys);
 				while($next !== false) {
 					$matches[$i]['parentCategories'][] = $next;
 					$parents = $parents[$next];
-					$next = reset(array_keys($parents));
+					$keys = array_keys($parents);
+					$next = reset($keys);
 				}
 				$matches[$i]['parentCategories'] = array_reverse($matches[$i]['parentCategories']);
 					
@@ -331,11 +333,13 @@ class AutoCompletionRequester {
 				$parents = $title->getParentCategoryTree();
 				$matches[$i]['parentCategories'] = array();
 					
-				$next = reset(array_keys($parents));
+				$keys = array_keys($parents);
+				$next = reset($keys);
 				while($next !== false) {
 					$matches[$i]['parentCategories'][] = $next;
 					$parents = $parents[$next];
-					$next = reset(array_keys($parents));
+					$keys = array_keys($parents);
+					$next = reset($keys);
 				}
 				$matches[$i]['parentCategories'] = array_reverse($matches[$i]['parentCategories']);
 			}
