@@ -1708,7 +1708,7 @@ function smwfSetUserDefinedCookies($user) {
 	foreach($namespaceMappings as $nsIndex => $imgPath) {
 		$serializedMappings .= ",$nsIndex=$imgPath";
 	}
-	setcookie("AC_options", $autoTriggering.$serializedMappings, 0, "$wgScriptPath/"); // cookie gets invalid at session-end.
+	setcookie("AC_options", $autoTriggering.$serializedMappings, 0, "$wgScriptPath/"); // cookie becomes invalid at session-end.
 	return true;
 }
 
