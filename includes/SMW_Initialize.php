@@ -564,6 +564,20 @@ function smwgHaloSetupExtension() {
 				}
 			}
 		}
+		
+		//check if a semantic form is displayed and if fanxybox therefore must not be included twice
+		global $wgContLang, $wgRequest;
+		if((array_key_exists('action', $_REQUEST) && $_REQUEST['action'] == 'formedit')
+				|| $wgRequest->getVal('title', '') == $wgContLang->getNsText(NS_SPECIAL).':UploadWindow'	 	
+				|| $wgRequest->getVal('title', '') == $wgContLang->getNsText(NS_SPECIAL).':FormEdit'){
+			 
+			 global $smgJSLibs;
+			 foreach($smgJSLibs as $key => $scriptId){
+			 	if($scriptId == 'fancybox'){
+			 		unset($smgJSLibs[$key]);
+			 	}
+			 }
+		}
 
 		return true;
 }
