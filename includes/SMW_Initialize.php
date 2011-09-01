@@ -235,7 +235,8 @@ function smwgHaloSetupExtension() {
 	if ($lodgNEPEnabled) {
 		$wgHooks['ArticleFromTitle'][]      = 'LODNonExistingPageHandler::onArticleFromTitle';
 		$wgHooks['EditFormPreloadText'][]   = 'LODNonExistingPageHandler::onEditFormPreloadText';
-
+        $wgHooks['sfEditFormPreloadText'][]   = 'LODNonExistingPageHandler::onEditFormPreloadText';
+        
 		global $lodgNEPGenericTemplate, $lodgNEPPropertyPageTemplate, $lodgNEPCategoryPageTemplate, $lodgNEPUseGenericTemplateIfCategoryMember, $lodgNEPCategoryTemplatePattern;
 		####
 		# string - Article name of the generic template for all non-existing pages but

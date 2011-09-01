@@ -243,80 +243,89 @@ class  LODNonExistingPage extends Article {
 
 
 	/**
-     * Adds the categories as annotations. Note: Will not work with LOD.  
-     *
-     * @param string $uri
-     *      URI of the Linked Data item that can have types (rdf:type)
-     * @param array<string => string> $content
-     *      This array contains key/values pairs for the content. This method
-     *      adds the content of the category templates with the key
-     *      "Category:<category name>".
-     *
-     */
+	 * Adds the categories as annotations. Note: Will not work with LOD.
+	 *
+	 * @param string $uri
+	 *      URI of the Linked Data item that can have types (rdf:type)
+	 * @param array<string => string> $content
+	 *      This array contains key/values pairs for the content. This method
+	 *      adds the content of the category templates with the key
+	 *      "Category:<category name>".
+	 *
+	 */
 	private static function addCategoryAnnotations($uri, &$content) {
 
 		// get the categories of the entity
 
+		$categories = self::getCategoriesForURI($uri);
+		$content['Categories'] = ''; // category string
+
+		// Fetch templates from categories of the entity
+		foreach ($categories as $cat) {
+			$content['Categories'] .= "\n[[".$cat->getPrefixedText()."]]\n";
+		}
+	}
+
+	/**
+	 * Gets all categories of a given page given by URI.
+	 * 
+	 * @param string $uri
+	 * 
+	 * @return Title []
+	 */
+	private static function getCategoriesForURI($uri) {
 		$query = <<<SPARQL
-			PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-			SELECT ?C
-			WHERE {
-				
-				<$uri> rdf:type ?C .
-				
-			}
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            SELECT ?C
+            WHERE {
+                
+                <$uri> rdf:type ?C .
+                
+            }
 SPARQL;
-        global $smwgTripleStoreGraph;
+		global $smwgTripleStoreGraph;
 		$result = self::queryTripleStore($query, $smwgTripleStoreGraph);
 		$result = self::parseSparqlXMLResult($result);
 		if (!$result) {
 			// No categories found for the given URI
 			return;
 		}
-		
+
 		$categories = array();
 		foreach ($result as $catURI) {
 			$t = TSHelper::getTitleFromURI($catURI);
-			$categories[] = $t->getText();
+			$categories[] = $t;
 		}
-
-		global $wgContLang;
-		$content['Categories'] = ''; // category string
-		$catNsText = $wgContLang->getNsText(NS_CATEGORY);
-
-		// Fetch templates from categories of the entity
-		foreach ($categories as $cat) {
-			$content['Categories'] .= "\n[[$catNsText:".$cat."]]\n";
-		}
+		return $categories;
 	}
-	
+
 	/**
-     * Adds the content of each category template for non-existing pages.
-     * The Linked Data item with the URI $uri can have several types that are
-     * associated with mediawiki categories. For each of them a template can be
-     * defined and its content (wiki text) is added to the array $content.
-     *
-     * @param string $uri
-     *      URI of the Linked Data item that can have types (rdf:type)
-     * @param array<string => string> $content
-     *      This array contains key/values pairs for the content. This method
-     *      adds the content of the category templates with the key
-     *      "Category:<category name>".
-     *
-     */
-    private static function addCategoryContent($uri, &$content) {
-        global $lodgNEPCategoryTemplatePattern;
-        if (!isset($lodgNEPCategoryTemplatePattern)) {
-            // no category articles defined
-            return;
-        }
+	 * Adds the content of each category template for non-existing pages.
+	 * The Linked Data item with the URI $uri can have several types that are
+	 * associated with mediawiki categories. For each of them a template can be
+	 * defined and its content (wiki text) is added to the array $content.
+	 *
+	 * @param string $uri
+	 *      URI of the Linked Data item that can have types (rdf:type)
+	 * @param array<string => string> $content
+	 *      This array contains key/values pairs for the content. This method
+	 *      adds the content of the category templates with the key
+	 *      "Category:<category name>".
+	 *
+	 */
+	private static function addCategoryContent($uri, &$content) {
+		global $lodgNEPCategoryTemplatePattern;
+		if (!isset($lodgNEPCategoryTemplatePattern)) {
+			// no category articles defined
+			return;
+		}
 
-        // get the categories of the entity
+		// get the categories of the entity
 
-        if (!class_exists("LODTripleStoreAccess")) return;
+		if (!class_exists("LODTripleStoreAccess")) return;
 
-        $tsa = new LODTripleStoreAccess();
-        $query = <<<SPARQL
+		$tsa = new LODTripleStoreAccess();
+		$query = <<<SPARQL
             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
             SELECT ?C
             WHERE {
@@ -326,28 +335,28 @@ SPARQL;
             }
 SPARQL;
 
-        $result = $tsa->queryTripleStore($query);
-        if (!$result) {
-            // No categories found for the given URI
-            return;
-        }
-        $rows = $result->getRows();
-        $categories = array();
-        foreach ($rows as $r) {
-            $catURI = $r->getResult("C")->getValue();
-            $t = TSHelper::getTitleFromURI($catURI);
-            $categories[] = $t->getText();
-        }
+		$result = $tsa->queryTripleStore($query);
+		if (!$result) {
+			// No categories found for the given URI
+			return;
+		}
+		$rows = $result->getRows();
+		$categories = array();
+		foreach ($rows as $r) {
+			$catURI = $r->getResult("C")->getValue();
+			$t = TSHelper::getTitleFromURI($catURI);
+			$categories[] = $t->getText();
+		}
 
-        // Fetch templates from categories of the entity
-        foreach ($categories as $cat) {
-            $catTemplate = str_replace("{cat}", $cat, $lodgNEPCategoryTemplatePattern);
-            $con = self::getContentOfArticle($catTemplate);
-            if (!is_null($con)) {
-                $content["Category:$cat"] = $con;
-            }
-        }
-    }
+		// Fetch templates from categories of the entity
+		foreach ($categories as $cat) {
+			$catTemplate = str_replace("{cat}", $cat, $lodgNEPCategoryTemplatePattern);
+			$con = self::getContentOfArticle($catTemplate);
+			if (!is_null($con)) {
+				$content["Category:$cat"] = $con;
+			}
+		}
+	}
 
 	/**
 	 * Retrieves the content (wiki text) of the article with the name $articleName.
@@ -385,10 +394,21 @@ SPARQL;
 									 'preloadNEP' => 'true',
 									 'mode' => 'wysiwyg'));
 		} else {
-			$link = $t->getFullUrl(array('action' => 'edit',
+			$categoriesAsText = array();
+			$categories = self::getCategoriesForURI($uri);
+			foreach($categories as $c) $categoriesAsText[] = $c->getText();
+			$link = ASFFormGeneratorUtils::getCreateNewInstanceLink($article->getTitle()->getPrefixedDBkey(), $categoriesAsText);
+			if ($link === false) {
+                $link = $t->getFullUrl(array('action' => 'edit',
                                      'preloadNEP' => 'true',
                                      'mode' => 'wysiwyg',
-			                         'uri' => $uri));
+                                     'uri' => $uri));
+			} else {
+				$queryString = wfArrayToCGI(array('preloadNEP' => 'true',
+                                     'mode' => 'wysiwyg',
+                                     'uri' => $uri));
+				$link .= "&$queryString";
+			}
 		}
 		$name = $t->getFullText();
 		$message = wfMsg('lod_nep_link', $name);
@@ -411,14 +431,14 @@ SPARQL;
 			// An exception occurred => no result
 			return null;
 		}
-		
+
 		return $result;
 	}
 
 	/**
 	 * Parses a result of categories
 	 * @param string SPARQL-XML
-	 * 
+	 *
 	 * @return string[] Category URIs
 	 */
 	private static function parseSparqlXMLResult($sparqlXMLResult) {
