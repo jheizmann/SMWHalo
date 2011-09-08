@@ -288,7 +288,7 @@ SPARQL;
 		$result = self::parseSparqlXMLResult($result);
 		if (!$result) {
 			// No categories found for the given URI
-			return;
+			return array();
 		}
 
 		$categories = array();
