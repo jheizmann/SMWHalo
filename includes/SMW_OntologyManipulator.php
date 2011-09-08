@@ -685,7 +685,7 @@ function smwf_om_EditProperty($pagename, $newType, $newCard, $newRange, $oldType
 	global $smwgContLang;
 	$propertyLabels = $smwgContLang->getPropertyLabels();
 	
-	$search = '/(\[\[(\s*)' . $propertyLabels['_TYPE'] . '(\s*)::\s*([^|]+)\s*(\|)?\s*\]\])/i';
+	$search = '/(\[\[(\s*)' . $propertyLabels['_TYPE'] . '(\s*)::\s*([^]|]+)\s*(\|)?\s*\]\])/i';
 	$newTypeTitle = Title::newFromText($newType, SMW_NS_TYPE);
 	$replace = '[[' . $propertyLabels['_TYPE'] . '::'.$newTypeTitle->getPrefixedText().']]';
 
@@ -699,7 +699,7 @@ function smwf_om_EditProperty($pagename, $newType, $newCard, $newRange, $oldType
 
 	// Replace "has min cardinality" annotations
 	$hasMinCardinalityProperty = $ssp[SMW_SSP_HAS_MIN_CARD];
-	$search = '/(\[\[(\s*)' .$hasMinCardinalityProperty . '(\s*)::\s*[^|]+\s*(\|)?\s*\]\])/i';
+	$search = '/(\[\[(\s*)' .$hasMinCardinalityProperty . '(\s*)::\s*[^]|]+\s*(\|)?\s*\]\])/i';
 	$replace = '[[' . $hasMinCardinalityProperty . '::'.$newCard.']]';
 	if (preg_match($search, $text) === 0) {
 		// replacement does not yet exist, so add it simply
