@@ -1,5 +1,5 @@
 /*  Copyright 2007, ontoprise GmbH
- *   Author: Kai Kï¿½hn
+ *   Author: Kai K�hn
  *   This file is part of the halo-Extension.
  *
  *   The halo-Extension is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
  * @ingroup SMWHaloSpecials
  * @ingroup SMWHaloOntologyBrowser
  * 
- * @author Kai Kï¿½hn
+ * @author Kai K�hn
  */
 
 // commandIDs
@@ -979,7 +979,8 @@ OBOntologyModifier.prototype = {
 			}
 		}
 		if (rangeOrTypes.length > 1) {
-			content += "\n[[_TYPE::Type:Page]]";
+			var typeNS = gLanguage.getMessage('TYPE_NS');
+			content += "\n[[_TYPE::"+typeNS+rangeOrTypes[0]+"]]";
 		} else {
 			content += "\n[[_TYPE::" + rangeTypeStr + "]]";
 		}
@@ -2546,7 +2547,7 @@ OBSchemaPropertySubMenu.prototype = Object
 							 var maxCard = '';						
 							}
 							this.MandatoryChecked = false;
-                                                        var rangeOrTypes1 = [];
+                            var rangeOrTypes1 = [];
 							var rangeOrTypes = [];
 
 						
