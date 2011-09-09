@@ -2,6 +2,7 @@
 <deploydescriptor>
 	<global>
 		<version>156</version>
+		<patchlevel>4</patchlevel>
 		<id>smwhalo</id>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
@@ -16,7 +17,7 @@
 		    <dependency from="1150" to="1169">mw</dependency>
 			<dependency from="156">smw</dependency>
 			<dependency from="101">scriptmanager</dependency>
-            <dependency from="100" to="100">arclibrary</dependency>
+            <dependency from="100" to="200">arclibrary</dependency>
             <dependency from="131">deployment</dependency>
 		</dependencies>
 	</global>

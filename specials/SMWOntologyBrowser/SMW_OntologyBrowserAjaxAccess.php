@@ -788,12 +788,12 @@ class OB_StorageTS extends OB_Storage {
 			// query
 			if ($onlyAssertedCategories) {
 				$allSubCategories = smwfGetSemanticStore()->getSubCategories(Title::newFromText($categoryName, NS_CATEGORY));
-				$categoryDisjuction = '';
+				$categoryDisjuction = $categoryName;
 				foreach($allSubCategories as $sc) {
 					list($c, $isLeaf) = $sc;
 					$categoryDisjuction .= '||'.$c->getText();
 				}
-				$categoryDisjuction = substr($categoryDisjuction, 2);
+				
 				$response = $client->query("[[Category:$categoryDisjuction]]", "?Category|limit=$limit|offset=$offset|merge=false|sort=_X_|infer=false$dataSpace$metadataRequest", $smwgTripleStoreGraph);
 			} else {
 				$response = $client->query("[[Category:$categoryName]]", "?Category|limit=$limit|offset=$offset|merge=false|sort=_X_$dataSpace$metadataRequest", $smwgTripleStoreGraph);
@@ -884,6 +884,7 @@ class OB_StorageTS extends OB_Storage {
 	}
 
 	private function containsTitle($titleSet, $title) {
+        if (! is_object($title)) return false;
 		foreach($titleSet as $t) {
 			if ($title->equals($t)) return true;
 		}

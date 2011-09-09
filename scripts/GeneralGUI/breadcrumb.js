@@ -72,7 +72,13 @@ Breadcrumb.prototype = {
     },
     
     pasteInHTML: function(breadcrumbArray) {
-        var html = "";
+       var html = "";
+		var IndexCr = 0;
+		var crumbs = []; 
+		var breadcrumb = breadcrumbArray[breadcrumbArray.length - 1];            
+		var title = breadcrumb.pageName.split(":");            
+        var currentCrumb = title.length == 2 ? title[1] : title[0];
+        currentCrumb = currentCrumb.replace(/_/g, " ");
 
         for (var index = 0, len = breadcrumbArray.length; index < len; ++index) {
             var breadcrumb = breadcrumbArray[index];
@@ -92,17 +98,23 @@ Breadcrumb.prototype = {
             	var articlePath = wgArticlePath.replace("$1", encURI) + breadcrumb.queryString;
             }
             //add all previous visited pages as link
-            if (index < len -1){
+			var duplicated = false; 
+			crumbs[IndexCr] = show;
+			 for (var index = 0; index < IndexCr; ++index) {
+			   if(crumbs[index] == show){
+			    duplicated = true;
+			   }
+			 }
+			 IndexCr++;
+            if (index < len -1 && show != currentCrumb && duplicated == false){
                 html += '<a href="'+wgServer+articlePath+'">'+show+' &gt; </a>';
             }
             //add current page as normal text
-            else {
+            if(index == len -1) {
                html += '<span id="smwh_breadcrumb_currentpage">'+show+'</span>';
-            }
-            
+            }           
         };
-        //add the last item (current page) not as link
-
+		
         //Check if breadcrumb-div exists
         var bc_div = $('breadcrumb');
 

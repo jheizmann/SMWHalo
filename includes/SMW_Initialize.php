@@ -39,7 +39,7 @@ $smwgProcessedAnnotations = null;
 $wgCustomVariables = array('CURRENTUSER', 'CURRENTUSERNS', 'NOW', 'TODAY');
 $smwgHaloStyleVersion = preg_replace('/[^\d]/', '', '{{$BUILDNUMBER}}' );
 if (strlen($smwgHaloStyleVersion) > 0)
-    $smwgHaloStyleVersion= '?'.$smwgHaloStyleVersion;
+$smwgHaloStyleVersion= '?'.$smwgHaloStyleVersion;
 
 //Disable default mediawiki autocompletion, so it does not interfere with the mw one
 $wgEnableMWSuggest = false;
@@ -98,13 +98,15 @@ function enableSMWHalo($store = 'SMWHaloStore2', $tripleStore = NULL, $tripleSto
 	global $smwgHaloIP;
 	require_once( "$smwgHaloIP/includes/QueryManagement/SMW_QM_QueryManagementHandler.php" );
 
-	global $wgAutoloadClasses;
-	$wgAutoloadClasses['SMWQueryCallMetadataValue'] =
+	global $smwgQRCEnabled;
+	if (isset($smwgQRCEnabled) && $smwgQRCEnabled === true) {
+		global $wgAutoloadClasses;
+		$wgAutoloadClasses['SMWQueryCallMetadataValue'] =
 		"$smwgHaloIP/includes/QueryManagement/SMW_QM_DV_QueryCallMetadata.php";
 
-	$wgHooks['smwInitDatatypes'][] = 'SMWQMQueryManagementHandler::initQRCDataTypes';
-	$wgHooks['smwInitProperties'][] = 'SMWQMQueryManagementHandler::initProperties';
-
+		$wgHooks['smwInitDatatypes'][] = 'SMWQMQueryManagementHandler::initQRCDataTypes';
+		$wgHooks['smwInitProperties'][] = 'SMWQMQueryManagementHandler::initProperties';
+	}
 }
 
 /**
@@ -125,6 +127,28 @@ function smwgHaloSetupExtension() {
 		trigger_error('$smwgWebserviceEndpoint is required but not set. Example: $smwgWebserviceEndpoint="localhost:8080";');
 		die();
 	}
+
+	// check if dependant extensions are installed
+	if (!defined('DF_VERSION')) {
+		$msg = "Deployment framework is not installed.";
+		trigger_error($msg);
+	}
+
+	if (!defined('SCM_VERSION')) {
+		$msg = "ScriptManager is not installed.";
+		trigger_error($msg);
+	}
+
+	if (!defined('SMW_VERSION')) {
+		$msg = 'SMW is not installed.';
+		trigger_error($msg);
+	}
+
+	if (!defined('ARCLIB_ARCLIBRARY_VERSION')) {
+		$msg = 'ArcLibrary is not installed.';
+		trigger_error($msg);
+	}
+
 	global $smwgWebserviceProtocol;
 	$smwgWebserviceProtocol="rest";
 	$smwgMasterGeneralStore = NULL;
@@ -157,13 +181,13 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWQueryList'] = $smwgHaloIP . '/specials/SMWQueryList/SMW_QueryList.php';
 	$wgAutoloadClasses['SMWArticleBuiltinProperties'] = $smwgHaloIP . '/includes/SMW_ArticleBuiltinProperties.php';
 	$wgAutoloadClasses['SMWPivotTableResultPrinter'] = $smwgHaloIP . '/includes/queryprinters/SMW_QP_PivotTable.php';
-	
+
 
 	//patch Special:Browse in order to hide special Query Management Property
 	$wgSpecialPages['Browse']  = array( 'SMWQMSpecialBrowse' );
 
 	require_once $smwgHaloIP.'/includes/queryprinters/SMW_QP_Halo.php';
-	
+
 
 	global $smwgResultFormats;
 
@@ -195,8 +219,8 @@ function smwgHaloSetupExtension() {
 	$wgHooks['smwInitDatatypes'][] = 'smwfHaloInitDatatypes';
 
 	$wgHooks['smwInitProperties'][] = 'smwfInitSpecialPropertyOfSMWHalo';
-    $wgHooks['ArticleSaveComplete'][] = 'smwfSavesNamespaceMappings';
-    
+	$wgHooks['ArticleSaveComplete'][] = 'smwfSavesNamespaceMappings';
+
 	global $smwgDefaultStore, $smwgShowDerivedFacts, $wgRequest;
 	if ($smwgShowDerivedFacts === true) {
 		$wgHooks['smwShowFactbox'][] = 'smwfAddDerivedFacts';
@@ -211,7 +235,8 @@ function smwgHaloSetupExtension() {
 	if ($lodgNEPEnabled) {
 		$wgHooks['ArticleFromTitle'][]      = 'LODNonExistingPageHandler::onArticleFromTitle';
 		$wgHooks['EditFormPreloadText'][]   = 'LODNonExistingPageHandler::onEditFormPreloadText';
-
+        $wgHooks['sfEditFormPreloadText'][]   = 'LODNonExistingPageHandler::onEditFormPreloadText';
+        
 		global $lodgNEPGenericTemplate, $lodgNEPPropertyPageTemplate, $lodgNEPCategoryPageTemplate, $lodgNEPUseGenericTemplateIfCategoryMember, $lodgNEPCategoryTemplatePattern;
 		####
 		# string - Article name of the generic template for all non-existing pages but
@@ -326,10 +351,10 @@ function smwgHaloSetupExtension() {
 
 	// register AC icons
 	$wgHooks['smwhACNamespaceMappings'][] = 'smwfRegisterAutocompletionIcons';
-	
+
 	// register hook for additional builtin properties
 	$wgHooks['NewRevisionFromEditComplete'][] = 'SMWArticleBuiltinProperties::onNewRevisionFromEditComplete'; // fetch some MediaWiki data for replication in SMW's store
-	
+
 
 	// add triple store hooks if necessary
 	global $smwgDefaultStore,$smwgIgnoreSchema;
@@ -399,8 +424,8 @@ function smwgHaloSetupExtension() {
 			case '_ts_' :
 				smwfHaloInitMessages();
 				break; // contained in this file
-			
-			case '_na_' :   //create new article feature. 
+
+			case '_na_' :   //create new article feature.
 				smwfHaloInitMessages();
 				require_once $smwgHaloIP . '/includes/SMW_CreateNewArticle.php';
 				require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
@@ -438,7 +463,7 @@ function smwgHaloSetupExtension() {
 		$wgAutoloadClasses['SMWTripleStoreAdmin'] = $smwgHaloIP . '/specials/SMWTripleStoreAdmin/SMW_TripleStoreAdmin.php';
 		$wgSpecialPages['TSA'] = array('SMWTripleStoreAdmin');
 		$wgSpecialPageGroups['TSA'] = 'smwplus_group';
-		
+
 		$wgAutoloadClasses['SMWHaloAdmin'] = $smwgHaloIP . '/specials/SMWHaloAdmin/SMW_HaloAdmin.php';
 		$wgSpecialPages['SMWHaloAdmin'] = array('SMWHaloAdmin');
 		$wgSpecialPageGroups['SMWHaloAdmin'] = 'smwplus_group';
@@ -476,72 +501,86 @@ function smwgHaloSetupExtension() {
 		'author'=>"Thomas&nbsp;Schweitzer, Kai&nbsp;K&uuml;hn, Markus&nbsp;Nitsche, J&ouml;rg Heizmann, Frederik&nbsp;Pfisterer, Robert Ulrich, Daniel Hansch, Moritz Weiten and Michael Erdmann. Owned by [http://www.ontoprise.de ontoprise GmbH].", 
 		'url'=>'http://smwforum.ontoprise.com/smwforum/index.php/Help:Halo_Extension_User_Manual',
 		'description' => 'Facilitate the use of Semantic Mediawiki for a large community of non-tech-savvy users. [http://smwforum.ontoprise.com/smwforum/index.php/Help:SMW%2B_User_Manual View feature description.]'
-	);
+		);
 
-	global $smwgDefaultStore;
-	if (smwfIsTripleStoreConfigured()) {
-		$wgHooks['InternalParseBeforeLinks'][] = 'smwfTripleStoreParserHook';
-	}
-	$wgAjaxExportList[] = 'smwf_ts_getSyncCommands';
-	$wgAjaxExportList[] = 'smwf_ts_getWikiNamespaces';
-	$wgAjaxExportList[] = 'smwf_ts_getWikiSpecialProperties';
-	$wgAjaxExportList[] = 'smwf_ts_triggerAsynchronousLoading';
-
-	// make hook for red links if $lodgNEPEnabled is disabled (see above)
-    global $smwgRedLinkWithCreateNewPage;
-    if ($smwgRedLinkWithCreateNewPage && !$lodgNEPEnabled)
-        $wgHooks['LinkEnd'][] = 'smwfBrokenLinkForPage';
-
-	// make hook for RichMedia
-	$wgHooks['CheckNamespaceForImage'][] = 'smwfRichMediaIsImage';
-
-	// add the 'halo' form input type, if Semantic Forms is installed
-	if ( defined('SF_VERSION') ) {
-		global $sfgFormPrinter;
-		if (isset($sfgFormPrinter)) {
-			$sfgFormPrinter->setInputTypeHook('haloACtext', 'smwfHaloFormInput', array());
-			$sfgFormPrinter->setInputTypeHook('haloACtextarea', 'smwfHaloFormInputTextarea', array());
+		global $smwgDefaultStore;
+		if (smwfIsTripleStoreConfigured()) {
+			$wgHooks['InternalParseBeforeLinks'][] = 'smwfTripleStoreParserHook';
 		}
-	}
+		$wgAjaxExportList[] = 'smwf_ts_getSyncCommands';
+		$wgAjaxExportList[] = 'smwf_ts_getWikiNamespaces';
+		$wgAjaxExportList[] = 'smwf_ts_getWikiSpecialProperties';
+		$wgAjaxExportList[] = 'smwf_ts_triggerAsynchronousLoading';
 
-	//Initialize Tabular Forms
-	require_once($smwgHaloIP.'/includes/TabularForms/TF_AjaxAccess.php');
-	$wgAutoloadClasses['TFTabularFormQueryPrinter'] =
-	$smwgHaloIP.'/includes/TabularForms/TF_QP_TabularForm.php';
-	$wgAutoloadClasses['TFDataAPIAccess'] =
-	$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
-	$wgAutoloadClasses['TFAnnotationData'] =
-	$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
-	$wgAutoloadClasses['TFAnnotationData'] =
-	$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
-	$wgAutoloadClasses['TFAnnotationDataCollection'] =
-	$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
-	$wgAutoloadClasses['TFTemplateParameterCollection'] =
-	$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
-	$wgAutoloadClasses['TFQueryAnalyser'] =
-	$smwgHaloIP.'/includes/TabularForms/TF_QueryAnalyser.php';
-	$smwgResultFormats['tabularform'] = 'TFTabularFormQueryPrinter';
-	
-	define('TF_IS_QC_CMP', 'qc_');
-	define('TF_IS_EXISTS_CMP', 'plus_');
-	define('TF_CATEGORY_KEYWORD', '__Category__');
+		// make hook for red links if $lodgNEPEnabled is disabled (see above)
+		global $smwgRedLinkWithCreateNewPage;
+		if ($smwgRedLinkWithCreateNewPage && !$lodgNEPEnabled)
+		$wgHooks['LinkEnd'][] = 'smwfBrokenLinkForPage';
 
-    // Check if qi is called via an curl call and if a token is set
-    if (!is_null($title) && $title->getText() == 'QueryInterface') {
-        global $smwgQueryInterfaceSecret;
-        if (isset($smwgQueryInterfaceSecret)) {
-            global $wgRequest;
-            $token = $wgRequest->getText('s');
-            $hash = $wgRequest->getText('t');
-            require_once $smwgHaloIP.'/specials/SMWQueryInterface/SMW_QIAjaxAccess.php';
-            if (!empty ($token) && !empty($hash) && qiCheckHash( $token, $hash)) {
-                global $wgWhitelistRead;
-                $wgWhitelistRead[]= MWNamespace::getCanonicalName(-1).':QueryInterface';
-            }
-        }
-    }
-	
-	return true;
+		// make hook for RichMedia
+		$wgHooks['CheckNamespaceForImage'][] = 'smwfRichMediaIsImage';
+
+		// add the 'halo' form input type, if Semantic Forms is installed
+		if ( defined('SF_VERSION') ) {
+			global $sfgFormPrinter;
+			if (isset($sfgFormPrinter)) {
+				$sfgFormPrinter->setInputTypeHook('haloACtext', 'smwfHaloFormInput', array());
+				$sfgFormPrinter->setInputTypeHook('haloACtextarea', 'smwfHaloFormInputTextarea', array());
+			}
+		}
+
+		//Initialize Tabular Forms
+		require_once($smwgHaloIP.'/includes/TabularForms/TF_AjaxAccess.php');
+		$wgAutoloadClasses['TFTabularFormQueryPrinter'] =
+		$smwgHaloIP.'/includes/TabularForms/TF_QP_TabularForm.php';
+		$wgAutoloadClasses['TFDataAPIAccess'] =
+		$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
+		$wgAutoloadClasses['TFAnnotationData'] =
+		$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
+		$wgAutoloadClasses['TFAnnotationData'] =
+		$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
+		$wgAutoloadClasses['TFAnnotationDataCollection'] =
+		$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
+		$wgAutoloadClasses['TFTemplateParameterCollection'] =
+		$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
+		$wgAutoloadClasses['TFQueryAnalyser'] =
+		$smwgHaloIP.'/includes/TabularForms/TF_QueryAnalyser.php';
+		$smwgResultFormats['tabularform'] = 'TFTabularFormQueryPrinter';
+
+		define('TF_IS_QC_CMP', 'qc_');
+		define('TF_IS_EXISTS_CMP', 'plus_');
+		define('TF_CATEGORY_KEYWORD', '__Category__');
+
+		// Check if qi is called via an curl call and if a token is set
+		if (!is_null($title) && $title->getText() == 'QueryInterface') {
+			global $smwgQueryInterfaceSecret;
+			if (isset($smwgQueryInterfaceSecret)) {
+				global $wgRequest;
+				$token = $wgRequest->getText('s');
+				$hash = $wgRequest->getText('t');
+				require_once $smwgHaloIP.'/specials/SMWQueryInterface/SMW_QIAjaxAccess.php';
+				if (!empty ($token) && !empty($hash) && qiCheckHash( $token, $hash)) {
+					global $wgWhitelistRead;
+					$wgWhitelistRead[]= MWNamespace::getCanonicalName(-1).':QueryInterface';
+				}
+			}
+		}
+		
+		//check if a semantic form is displayed and if fanxybox therefore must not be included twice
+		global $wgContLang, $wgRequest;
+		if((array_key_exists('action', $_REQUEST) && $_REQUEST['action'] == 'formedit')
+				|| $wgRequest->getVal('title', '') == $wgContLang->getNsText(NS_SPECIAL).':UploadWindow'	 	
+				|| $wgRequest->getVal('title', '') == $wgContLang->getNsText(NS_SPECIAL).':FormEdit'){
+			 
+			 global $smgJSLibs;
+			 foreach($smgJSLibs as $key => $scriptId){
+			 	if($scriptId == 'fancybox'){
+			 		unset($smgJSLibs[$key]);
+			 	}
+			 }
+		}
+
+		return true;
 }
 
 function smwfRegisterAutocompletionIcons(& $namespaceMappings) {
@@ -835,10 +874,12 @@ function smwfHaloFormInput($cur_value, $input_name, $is_mandatory, $is_disabled,
 	}
 	// call now the general function of SF that creates the <input> field
 	//	$html = SFFormInput::$method($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args);
+	// as of SF 2.1.2 the method name has changed from getHTML to getText
+	$sfMethodName = (method_exists('SFTextInput', 'getHTML')) ? 'getHTML' : 'getText';
 	if($method == 'textEntryHTML') {
-		$html = SFTextInput::getHTML($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args);
+		$html = SFTextInput::$sfMethodName($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args);
 	} else {
-		$html = SFTextAreaInput::getHTML($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args);
+		$html = SFTextAreaInput::$sfMethodName($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args);
 	}
 
 	// add the constraints in the result output html. Either in input field or a textarea
@@ -1045,7 +1086,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/CreateNewArticle/createNewArticle.css');
 
 	//    $jsm->addCSSIf($smwgHaloScriptPath . '/skins/Glossary/glossary.css');
-	
+
 	// serialize the css
 	$jsm->serializeCSS($out);
 
@@ -1682,7 +1723,7 @@ function smwfSetUserDefinedCookies($user) {
 	foreach($namespaceMappings as $nsIndex => $imgPath) {
 		$serializedMappings .= ",$nsIndex=$imgPath";
 	}
-	setcookie("AC_options", $autoTriggering.$serializedMappings, 0, "$wgScriptPath/"); // cookie gets invalid at session-end.
+	setcookie("AC_options", $autoTriggering.$serializedMappings, 0, "$wgScriptPath/"); // cookie becomes invalid at session-end.
 	return true;
 }
 
@@ -2127,16 +2168,16 @@ function smwfAddIsExtensionInstalledMagic(&$magicWords, $langCode = "en"){
 }
 
 function smwfSavesNamespaceMappings(&$article, &$user, $text, $summary,
- $minoredit, $watchthis, $sectionanchor, &$flags, $revision, &$status, $baseRevId) {
-    if (!defined('DF_VERSION')) return true;
-    global $dfgLang;
-    if ($article->getTitle()->getText() == $dfgLang->getLanguageString('df_namespace_mappings_page')
-        && $article->getTitle()->getNamespace() == NS_MEDIAWIKI) {
-        $namespaceMappings = DFBundleTools::parseRegisteredPrefixes($text);
-        smwfGetSemanticStore()->clearNamespaceMappings();
-        foreach($namespaceMappings as $prefix => $uri) {
-            smwfGetSemanticStore()->addNamespaceMapping($prefix, $uri);
-        }
-    }
-    return true;
+$minoredit, $watchthis, $sectionanchor, &$flags, $revision, &$status, $baseRevId) {
+	if (!defined('DF_VERSION')) return true;
+	global $dfgLang;
+	if ($article->getTitle()->getText() == $dfgLang->getLanguageString('df_namespace_mappings_page')
+	&& $article->getTitle()->getNamespace() == NS_MEDIAWIKI) {
+		$namespaceMappings = DFBundleTools::parseRegisteredPrefixes($text);
+		smwfGetSemanticStore()->clearNamespaceMappings();
+		foreach($namespaceMappings as $prefix => $uri) {
+			smwfGetSemanticStore()->addNamespaceMapping($prefix, $uri);
+		}
+	}
+	return true;
 }

@@ -630,10 +630,10 @@ class SMWTripleStore extends SMWStore {
 	///// Query answering /////
 
 	public function getQueryResult(SMWQuery $query){
-		SMWQMQueryManagementHandler::getInstance()->storeQueryMetadata($query);
 
 		global $smwgQRCEnabled;
 		if($smwgQRCEnabled){
+			SMWQMQueryManagementHandler::getInstance()->storeQueryMetadata($query);
 			$qrc = new SMWQRCQueryResultsCache();
 			return $qrc->getQueryResult($query);
 		} else {
@@ -1004,6 +1004,7 @@ class SMWTripleStore extends SMWStore {
 			// iterate over SPARQL-XML result nodes and add an SMWResultArray object for each result
 			$qresults = array();
 			$rowIndex = 0;
+			$totalResults = 0;
 			foreach ($results as $r) {
 				$row = array();
 				$bindingNodeIndex = 0; // column = n-th XML binding node
@@ -1043,7 +1044,7 @@ class SMWTripleStore extends SMWStore {
 
 				// create result row. iterate over variable set and convert binding nodes to SMWDataValue objects
 				$maxResultsInColumn = 0;
-				$totalResults = 0;
+				
 				foreach ($variableSet as $var) {
 					$var = ucfirst($var);
 					if ($bindingNodeIndex < count($bindingSet)) {
@@ -1093,7 +1094,7 @@ class SMWTripleStore extends SMWStore {
 			}
 
 			// create query result object
-			$queryResult = new SMWHaloQueryResult($prs, $query, $qresults, $this, ($totalResults == $query->getLimit()));
+			$queryResult = new SMWHaloQueryResult($prs, $query, $qresults, $this, ($totalResults >= $query->getLimit()));
 			$qResultSet[$s] = $queryResult;
 		}
 		// consider multiple results
@@ -1377,12 +1378,12 @@ class SMWTripleStore extends SMWStore {
 			if (!$first) $result .= "|";
 			if ($printout->getData() == NULL) {
 				$label = $printout->getLabel();
-				global $wgContLang;
-				if ($label == $wgContLang->getNsText(NS_CATEGORY)) {
-					$result .= "?$label"; // category printout
-				} else {
-					$result .= "?=$label";
-				}
+			    global $wgContLang;
+                if ($printout->getMode() == SMWPrintRequest::PRINT_CATS) {
+                    $result .= "?".$wgContLang->getNsText(NS_CATEGORY);
+                } else {
+                    $result .= "?=$label";
+                }
 			} else if ($printout->getData() instanceof Title) {
 				$outputFormat = $printout->getOutputFormat() !== NULL ? "#".$printout->getOutputFormat() : "";
 				$result .= "?".$printout->getData()->getDBkey().$outputFormat."=".$printout->getLabel();

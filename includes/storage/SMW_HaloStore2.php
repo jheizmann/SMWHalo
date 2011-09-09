@@ -12,10 +12,9 @@ class SMWHaloStore2 extends SMWSQLStore2 {
 	 * the Query Results Cache and the Query Management
 	 */
 	public function getQueryResult(SMWQuery $query){
-		SMWQMQueryManagementHandler::getInstance()->storeQueryMetadata($query);
-
 		global $smwgQRCEnabled;
 		if($smwgQRCEnabled){
+			SMWQMQueryManagementHandler::getInstance()->storeQueryMetadata($query);
 			$qrc = new SMWQRCQueryResultsCache();
 			return $qrc->getQueryResult($query);
 		} else {
@@ -44,7 +43,19 @@ class SMWHaloStore2 extends SMWSQLStore2 {
 
 		}
 	}
-
+	
+	function deleteSubject(Title $subjectTitle) {
+		parent::deleteSubject($subjectTitle);
+		
+		// remove 
+		$db =& wfGetDB( DB_MASTER );
+		$smw_ids =  $db->tableName('smw_ids');
+		$smw_urimapping = $db->tableName('smw_urimapping');
+		$id = $db->selectRow($smw_ids, array('smw_id'), array('smw_title'=>$subjectTitle->getDBkey(), 'smw_namespace'=>$subjectTitle->getNamespace()));
+		if (is_null($id)) return; // something is wrong. stop here
+		// delete mappings
+        $db->delete($smw_urimapping, array('smw_id' => $id->smw_id));
+	}
 
 
 	/**

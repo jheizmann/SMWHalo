@@ -107,11 +107,11 @@ class  LODNonExistingPageHandler  {
 	 * @param string $text
 	 * @param Title $title
 	 */
-	public static function onEditFormPreloadText(&$text, Title &$title) {
+	public static function onEditFormPreloadText(&$text, Title $title) {
 		global $wgRequest;
 		if ($wgRequest->getVal('preloadNEP') === 'true') {
-			$text = LODNonExistingPage::getContentOfNEP(new Article($title));
 			$uri = $wgRequest->getVal('uri', '');
+			$text = LODNonExistingPage::getContentOfNEP(new Article($title), $uri);
 			if ($uri != '') {
 				// if URI is set add an ontology URI link
 				global $smwgHaloContLang;

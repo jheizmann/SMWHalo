@@ -336,6 +336,7 @@
                                 select="@localurl" />
                                  <xsl:choose>
                                     <xsl:when test="@uri and @notexists">&amp;action=edit&amp;preloadNEP=true</xsl:when>
+                                    <xsl:when test="@uri">&amp;action=edit</xsl:when>
                                     <xsl:otherwise>?action=edit</xsl:otherwise>
                                 </xsl:choose>
                             </xsl:attribute>
@@ -346,6 +347,7 @@
                                 select="@title_url" />
                                  <xsl:choose>
                                     <xsl:when test="@uri and @notexists">&amp;action=edit&amp;preloadNEP=true</xsl:when>
+                                    <xsl:when test="@uri">&amp;action=edit</xsl:when>
                                     <xsl:otherwise>?action=edit</xsl:otherwise>
                                 </xsl:choose>
                             </xsl:attribute>
@@ -356,6 +358,7 @@
                                 select="@namespace" />:<xsl:value-of select="@title_url" />
                                  <xsl:choose>
                                     <xsl:when test="@uri and @notexists">&amp;action=edit&amp;preloadNEP=true</xsl:when>
+                                    <xsl:when test="@uri">&amp;action=edit</xsl:when>
                                     <xsl:otherwise>?action=edit</xsl:otherwise>
                                 </xsl:choose>
                             </xsl:attribute>
@@ -374,7 +377,17 @@
 				</xsl:if>
 			</td>
 			<td>
-				<xsl:if test="count(child::category) > 0">
+			     <xsl:if test="count(child::category) = 1">
+                 <a style="margin-left:5px;">
+                    <xsl:attribute name="onclick">instanceActionListener.showSuperCategory(event, this,'<xsl:call-template
+                        name="replace-string"><xsl:with-param name="text" select="child::category" /><xsl:with-param
+                        name="from" select="$var-simple-quote" /><xsl:with-param
+                        name="to" select="$var-slash-quote" /></xsl:call-template>')</xsl:attribute>
+                    <xsl:variable name="superCategory" select="." />
+                    <xsl:value-of select="translate($superCategory, '_', $var-nonbreakspace)"></xsl:value-of>
+                </a>
+                </xsl:if>
+				<xsl:if test="count(child::category) > 1">
 				<select name="selector">
 				
 				<xsl:for-each select="child::category">
@@ -646,6 +659,14 @@
 						select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
 						select="$param-ns-property" />:<xsl:value-of select="@title_url" /></xsl:attribute>
 					{{SMW_OB_OPEN}}
+				</a>
+                 <a class="attribute" title="Edit {$title}" style="margin-left:5px;">
+					<xsl:attribute name="onclick">schemaEditPropertyListener.showSubMenuProperty(1, this,'<xsl:call-template
+						name="replace-string"><xsl:with-param name="text" select="@title" /><xsl:with-param
+						name="from" select="$var-simple-quote" /><xsl:with-param
+						name="to" select="$var-slash-quote" /></xsl:call-template>','<xsl:value-of select="@minCard" />','<xsl:value-of
+								select="child::rangeType[1]" />')</xsl:attribute>				
+					{{SMW_OB_EDIT}}
 				</a>
 
 
