@@ -1279,4 +1279,112 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
 [[Category:Person]]</text>
     </revision>
   </page>
+  <page>
+    <title>LTRPPage1</title>
+    <id>695</id>
+    <revision>
+      <id>3659</id>
+      <timestamp>2011-09-07T08:26:26Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">This is page LTRPPage1.
+
+[[LTRPNumber::1]] [[LTRPPage::LTRPPage1]] [[LTRPString::This is page 1]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>LTRPPage2</title>
+    <id>696</id>
+    <revision>
+      <id>3660</id>
+      <timestamp>2011-09-07T08:26:50Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">This is page LTRPPage2.
+
+[[LTRPNumber::2]] [[LTRPPage::LTRPPage2]] [[LTRPString::This is page 2]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>LTRPPage3</title>
+    <id>697</id>
+    <revision>
+      <id>3658</id>
+      <timestamp>2011-09-07T08:25:49Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">This is page LTRPPage3.
+
+[[LTRPNumber::3]] [[LTRPPage::LTRPPage3]] [[LTRPString::This is page 3]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>LTRPQuery</title>
+    <id>698</id>
+    <revision>
+      <id>3654</id>
+      <timestamp>2011-09-07T08:24:12Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>moved [[LTPRQuery]] to [[LTRPQuery]]</comment>
+      <text xml:space="preserve">{{#ask: [[LTRPString::+]]
+| ?LTRPString
+| ?LTRPNumber
+| ?LTRPPage 
+| format=table
+| merge=false
+|}}</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:LTRPString</title>
+    <id>91</id>
+    <revision>
+      <id>111</id>
+      <timestamp>2011-09-09T10:52:13Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with &quot;[[has type::Type:String| ]]&quot;</comment>
+      <text xml:space="preserve">[[has type::Type:String| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:LTRPNumber</title>
+    <id>92</id>
+    <revision>
+      <id>112</id>
+      <timestamp>2011-09-09T10:53:29Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with &quot;[[has type::Type:Number| ]]&quot;</comment>
+      <text xml:space="preserve">[[has type::Type:Number| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:LTRPPage</title>
+    <id>93</id>
+    <revision>
+      <id>113</id>
+      <timestamp>2011-09-09T10:53:43Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with &quot;[[has type::Type:Page| ]]&quot;</comment>
+      <text xml:space="preserve">[[has type::Type:Page| ]]</text>
+    </revision>
+  </page>
 </mediawiki>
