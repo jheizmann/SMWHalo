@@ -1,10 +1,10 @@
 Index: extensions/SemanticForms/includes/SF_ParserFunctions.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_ParserFunctions.php	(original)
-+++ extensions/SemanticForms/includes/SF_ParserFunctions.php	(patched version)
-@@ -246,6 +246,17 @@
- 				$inAutocompletionSource = $value;
- 				$autocompletion_type = 'namespace';
+--- extensions/SemanticForms/includes/SF_ParserFunctions.php	(revision 11959)
++++ extensions/SemanticForms/includes/SF_ParserFunctions.php	(working copy)
+@@ -279,6 +279,17 @@
+ 				self::loadScriptsForPopupForm( $parser );
+ 				$popupClassString = 'class="popupforminput"';
  			}
 +			/*op-patch|SR|2011-03-17|SF|HaloAC in #forminput|start*/
 +			/*op-patch|SR|2011-03-17|SF|HaloAC in #forminput|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/HaloAC_in_forminput_parser_function*/
@@ -20,8 +20,8 @@ Index: extensions/SemanticForms/includes/SF_ParserFunctions.php
  			elseif ( $i == 0 )
  				$inFormName = $param;
  			elseif ( $i == 1 )
-@@ -277,7 +288,18 @@
-
+@@ -310,7 +321,18 @@
+ 
  		$fs = SpecialPage::getPage( 'FormStart' );
  		$fs_url = $fs->getTitle()->getLocalURL();
 -		if ( empty( $inAutocompletionSource ) ) {
@@ -38,11 +38,11 @@ Index: extensions/SemanticForms/includes/SF_ParserFunctions.php
 +		elseif ( empty( $inAutocompletionSource ) ) {
 +		/*op-patch|SR|2011-03-17|SF|HaloAC in #forminput|end*/
  			$str = <<<END
- 			<form action="$fs_url" method="get">
- 			<p><input type="text" name="page_name" size="$inSize" value="$inValue" class="formInput" />
+ 			<form action="$fs_url" method="get" $popupClassString>
+ 			<p>
 Index: extensions/SemanticForms/skins/SemanticForms.css
 ===================================================================
---- extensions/SemanticForms/skins/SemanticForms.css	(revision 9639)
+--- extensions/SemanticForms/skins/SemanticForms.css	(revision 11959)
 +++ extensions/SemanticForms/skins/SemanticForms.css	(working copy)
 @@ -8,20 +8,33 @@
  }
