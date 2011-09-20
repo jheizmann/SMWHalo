@@ -397,7 +397,10 @@ SPARQL;
 			$categoriesAsText = array();
 			$categories = self::getCategoriesForURI($uri);
 			foreach($categories as $c) $categoriesAsText[] = $c->getText();
-			$link = ASFFormGeneratorUtils::getCreateNewInstanceLink($article->getTitle()->getPrefixedDBkey(), $categoriesAsText);
+			$link = false;
+			if (defined('ASF_VERSION')) { 
+			     $link = ASFFormGeneratorUtils::getCreateNewInstanceLink($article->getTitle()->getPrefixedDBkey(), $categoriesAsText);	
+			}
 			if ($link === false) {
                 $link = $t->getFullUrl(array('action' => 'edit',
                                      'preloadNEP' => 'true',
