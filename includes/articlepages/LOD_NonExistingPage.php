@@ -442,14 +442,14 @@ SPARQL;
 	 * Parses a result of categories
 	 * @param string SPARQL-XML
 	 *
-	 * @return string[] Category URIs
+	 * @return string[]/boolean Category URIs or false
 	 */
 	private static function parseSparqlXMLResult($sparqlXMLResult) {
 		$dom = simplexml_load_string($sparqlXMLResult);
-		$dom->registerXPathNamespace("sparqlxml", "http://www.w3.org/2005/sparql-results#");
 		if ($dom === FALSE) {
-			return null;
+			return false;
 		}
+		$dom->registerXPathNamespace("sparqlxml", "http://www.w3.org/2005/sparql-results#");
 
 		// add all rows to the query result
 		$results = $dom->xpath('//sparqlxml:result');
