@@ -234,7 +234,7 @@ function smwgHaloSetupExtension() {
 	$wgHooks['InternalParseBeforeLinks'][] = 'smwfRegisterIntegrationLink';
 
 	global $lodgNEPEnabled;
-	if ($lodgNEPEnabled) {
+	if ($lodgNEPEnabled && smwfIsTripleStoreConfigured()) {
 		$wgHooks['ArticleFromTitle'][]      = 'LODNonExistingPageHandler::onArticleFromTitle';
 		$wgHooks['EditFormPreloadText'][]   = 'LODNonExistingPageHandler::onEditFormPreloadText';
         $wgHooks['sfEditFormPreloadText'][]   = 'LODNonExistingPageHandler::onEditFormPreloadText';
