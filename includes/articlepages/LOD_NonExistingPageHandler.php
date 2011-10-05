@@ -109,6 +109,9 @@ class  LODNonExistingPageHandler  {
 	 */
 	public static function onEditFormPreloadText(&$text, Title $title) {
 		global $wgRequest;
+		if (is_null($title)) {
+			return true;
+		}
 		if ($wgRequest->getVal('preloadNEP') === 'true') {
 			$uri = $wgRequest->getVal('uri', '');
 			$text = LODNonExistingPage::getContentOfNEP(new Article($title), $uri);
