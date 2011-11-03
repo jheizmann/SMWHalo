@@ -235,6 +235,11 @@
 
 
 	<target name="deployscripts">
+
+		<echo>###############################################################################</echo>
+		<echo># Verify Issue 15939: Create extensions/SMWHalo/scripts/deployGeneralTools.js #</echo>
+		<echo>###############################################################################</echo>
+
 		<echo>General Tools</echo>
 		<java fork="true" jar="../../../buildtools/closure/compiler.jar" failonerror="true">
 			<arg value="--js=../../SMWHalo/scripts/ajaxhalo.js" />
