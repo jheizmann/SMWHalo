@@ -2,7 +2,7 @@
 <deploydescriptor>
 	<global>
 		<version>156</version>
-		<patchlevel>15</patchlevel>
+		<patchlevel>16</patchlevel>
 		<id>smwhalo</id>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
@@ -15,10 +15,10 @@
 		<license>GPL v2</license>
 		<dependencies>
 		    <dependency from="1150" to="1169">mw</dependency>
-			<dependency from="156">smw</dependency>
-			<dependency from="101">scriptmanager</dependency>
+			<dependency from="156" to="156">smw</dependency>
+			<dependency from="101" to="101">scriptmanager</dependency>
             <dependency from="100" to="200">arclibrary</dependency>
-            <dependency from="131">deployment</dependency>
+            <dependency from="156" to="156">deployment</dependency>
 		</dependencies>
 	</global>
 	<codefiles>
