@@ -642,9 +642,18 @@ function doHttpRequestWithCurl($server, $file, $debug = false) {
 		$port= $match[1];
 		$server = substr($server, 0, 0- strlen($port) -1);
 	}
+
+  //get protocol string
+  preg_match('/^(\w+):\/\//', $server, $match);
+  $proto = $match[1];
+  
 	$c = curl_init();
 	curl_setopt($c, CURLOPT_URL, $server.$file);
 	curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+  if ($proto == "https") {
+    curl_setopt($c, CURLOPT_SSL_VERIFYHOST, 0); // don't verify ssl
+    curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
+  }
     if (isset($port))
         curl_setopt($c, CURLOPT_PORT, $port);
     // needs authentication?	
