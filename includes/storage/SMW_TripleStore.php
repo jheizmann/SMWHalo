@@ -573,9 +573,11 @@ class SMWTripleStore extends SMWStore {
 		foreach($redirects as $r) {
 			switch($subject->getNamespace()) {
 				case SMW_NS_PROPERTY: $prop = "owl:equivalentProperty";
-				case NS_CATEGORY: $prop = "owl:equivalentClass";
-				case NS_MAIN: $prop = "owl:sameAs";
-				default: continue;
+                    break;
+                case NS_CATEGORY: $prop = "owl:equivalentClass";
+                    break;
+                default: $prop = "owl:sameAs";
+                    break;
 			}
 			$redirect_iri = $this->tsNamespace->getFullIRI($r);
 
