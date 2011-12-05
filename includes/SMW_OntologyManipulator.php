@@ -657,7 +657,12 @@ function smwf_om_EditProperty($pagename, $newType, $newCard, $newRange, $oldType
 	$oldDomainCategory = Title::newFromText($domainCategory, NS_CATEGORY);
 	if ($oldRange != '') {
 		$oldRangeCategory = Title::newFromText($oldRange, NS_CATEGORY);
-		$search = '/(\[\[(\s*)' . $hasDomainAndRangeProperty . '(\s*)::\s*'.$oldDomainCategory->getPrefixedText().'\s*;\s*'.$oldRangeCategory->getPrefixedText().'\s*(\|)?\s*\]\])/i';
+		$oldDomainCategoryQuoted = preg_quote($oldDomainCategory->getPrefixedText());
+        $oldDomainCategoryQuoted = str_replace("/", '\/', $oldDomainCategoryQuoted);
+        $oldRangeCategoryQuoted = preg_quote($oldRangeCategory->getPrefixedText());
+        $oldRangeCategoryQuoted = str_replace("/", '\/', $oldRangeCategoryQuoted);
+        
+        $search = '/(\[\[(\s*)' . $hasDomainAndRangeProperty . '(\s*)::\s*'.$oldDomainCategoryQuoted.'\s*;\s*'.$oldRangeCategoryQuoted.'\s*(\|)?\s*\]\])/i';
 		if ($newRange != '') {
 			$newRangeCategory = Title::newFromText($newRange, NS_CATEGORY);
 			$replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().'; '.$newRangeCategory->getPrefixedText().']]';
@@ -665,7 +670,10 @@ function smwf_om_EditProperty($pagename, $newType, $newCard, $newRange, $oldType
 			$replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().']]';
 		}
 	} else {
-		$search = '/(\[\[(\s*)' . $hasDomainAndRangeProperty . '(\s*)::\s*'.$oldDomainCategory->getPrefixedText().'\s*(;)?\s*(\|)?\s*\]\])/i';
+		$oldDomainCategoryQuoted = preg_quote($oldDomainCategory->getPrefixedText());
+        $oldDomainCategoryQuoted = str_replace("/", '\/', $oldDomainCategoryQuoted);
+        $search = '/(\[\[(\s*)' . $hasDomainAndRangeProperty . '(\s*)::\s*'.$oldDomainCategoryQuoted.'\s*(;)?\s*(\|)?\s*\]\])/i';
+		
 		if ($newRange != '') {
 			$newRangeCategory = Title::newFromText($newRange, NS_CATEGORY);
 			$replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().'; '.$newRangeCategory->getPrefixedText().']]';
