@@ -107,7 +107,7 @@ class  LODNonExistingPageHandler  {
 	 * @param string $text
 	 * @param Title $title
 	 */
-	public static function onEditFormPreloadText(&$text, Title $title) {
+	public static function onEditFormPreloadText(&$text, $title) {
 		global $wgRequest;
 		if (is_null($title)) {
 			return true;
