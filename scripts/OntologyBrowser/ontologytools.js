@@ -3108,13 +3108,13 @@ OBSchemaPropertySubMenu.prototype = Object
 							var type = null;
 							var range = "";
 
-							if ($('typeRange1_ontologytools') != null) {
-								type = $F('typeRange1_ontologytools');
+							if ($('add_typeRange1_ontologytools') != null) {
+								type = $F('add_typeRange1_ontologytools');
 							}
 
 							if (this.pageselected == true) {
-								if ($('typeRange2_ontologytools') != null) {
-									range = $F('typeRange2_ontologytools');
+								if ($('add_typeRange2_ontologytools') != null) {
+									range = $F('add_typeRange2_ontologytools');
 								}
 							}
 
@@ -3330,19 +3330,18 @@ OBSchemaPropertySubMenu.prototype = Object
 
 					onchangeTypeSelector : function(event) {
 						var value = $F(event.currentTarget);
-						if (value.toLowerCase() == gLanguage
-								.getMessage('PAGE_TYPE'), 'cont') {
-							$('typeRange2_ontologytools').enable();
-							$('typeRange2_ontologytools').setStyle( {
+						if (value.toLowerCase() == gLanguage.getMessage('TYPE_PAGE_WONS', 'cont')) {
+							$('add_typeRange2_ontologytools').enable();
+							$('add_typeRange2_ontologytools').setStyle( {
 								backgroundColor : '#fff'
 							});
 							this.pageselected = true;
 						} else {
-							$('typeRange2_ontologytools').value = "";
-							$('typeRange2_ontologytools').setStyle( {
+							$('add_typeRange2_ontologytools').value = "";
+							$('add_typeRange2_ontologytools').setStyle( {
 								backgroundColor : '#aaa'
 							});
-							$('typeRange2_ontologytools').disable();
+							$('add_typeRange2_ontologytools').disable();
 							this.pageselected = false;
 						}
 					},
@@ -3356,7 +3355,7 @@ OBSchemaPropertySubMenu.prototype = Object
 					 */
 					newTypeInputBox : function() {
 
-						var toReplace = '<select id="typeRange'
+						var toReplace = '<select id="add_typeRange'
 								+ this.count
 								+ '_ontologytools" name="types'
 								+ this.count
@@ -3382,7 +3381,7 @@ OBSchemaPropertySubMenu.prototype = Object
 
 					newRangeInputBox : function() {
 						var c = this.count + 1;
-						var toReplace = '<input class="wickEnabled" constraints="namespace: 14" disabled="false" type="text" id="typeRange'
+						var toReplace = '<input class="wickEnabled" constraints="namespace: 14" disabled="false" type="text" id="add_typeRange'
 								+ c + '_ontologytools" tabIndex="104"/>';
 						return toReplace;
 					},
