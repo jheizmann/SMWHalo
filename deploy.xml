@@ -2,7 +2,7 @@
 <deploydescriptor>
 	<global>
 		<id>smwhalo</id>
-        <patchlevel>9</patchlevel>
+        <patchlevel>10</patchlevel>
 		<title>Halo extension</title>
 		<version>1.6.0</version>
 		<vendor>ontoprise GmbH</vendor>
