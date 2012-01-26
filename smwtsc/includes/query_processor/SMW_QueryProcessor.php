@@ -113,7 +113,7 @@ class SMWQueryProcessor {
 		// determine sortkeys and ascendings:
 		if ( array_key_exists( 'order', $params ) ) {
 			$orders = explode( ',', $params['order'] );
-				
+
 			foreach ( $orders as $key => $order ) { // normalise
 				$order = strtolower( trim( $order ) );
 				if ( ( $order == 'descending' ) || ( $order == 'reverse' ) || ( $order == 'desc' ) ) {
@@ -133,23 +133,22 @@ class SMWQueryProcessor {
 		if ( array_key_exists( 'sort', $params ) ) {
 			$query->sort = true;
 			$query->sortkeys = array();
-				
-			foreach ( explode( ',', trim( $params['sort'] ) ) as $sort ) {
-				$sort = smwfNormalTitleDBKey( trim( $sort ) ); // slight normalisation
-				$order = current( $orders );
-				if ( $order === false ) { // default
-					$order = 'ASC';
-				}
 
-				if ( array_key_exists( $sort, $query->sortkeys ) ) {
-					// maybe throw an error here?
+			foreach ( explode( ',', $params['sort'] ) as $sort ) {
+				$propertyValue = SMWPropertyValue::makeUserProperty( trim( $sort ) );
+				if ( $propertyValue->isValid() ) {
+					$sortkey = $propertyValue->getDataItem()->getKey();
+					$order = current( $orders );
+					if ( $order === false ) { // default
+						$order = 'ASC';
+					}
+					$query->sortkeys[$sortkey] = $order; // should we check for duplicate sort keys?
+					next( $orders );
 				} else {
-					$query->sortkeys[$sort] = $order;
+					$query->addErrors( $propertyValue->getErrors() );
 				}
-
-				next( $orders );
 			}
-				
+
 			if ( current( $orders ) !== false ) { // sort key remaining, apply to page name
 				$query->sortkeys[''] = current( $orders );
 			}
@@ -192,11 +191,11 @@ class SMWQueryProcessor {
 			if ( is_array( $param ) ) {
 				$param = implode( ',', array_keys( $param ) );
 			}
-				
+
 			if ( is_string( $name ) && ( $name != '' ) ) { // accept 'name' => 'value' just as '' => 'name=value'
 				$param = $name . '=' . $param;
 			}
-				
+
 			if ( $param == '' ) {
 			} elseif ( $param { 0 } == '?' ) { // print statement
 				$param = substr( $param, 1 );
@@ -218,7 +217,7 @@ class SMWQueryProcessor {
 					if ( $title === null ) { // too bad, this is no legal property/category name, ignore
 						continue;
 					}
-						
+
 					if ( $title->getNamespace() == NS_CATEGORY ) {
 						$printmode = SMWPrintRequest::PRINT_CCAT;
 						$data = $title;
@@ -296,7 +295,7 @@ class SMWQueryProcessor {
 		if (!array_key_exists("source", $params) && smwfIsTripleStoreConfigured()) {
 			global $smwhgDefaultSource;
 			if (isset($smwhgDefaultSource)) {
-                $params['source'] = $smwhgDefaultSource;
+				$params['source'] = $smwhgDefaultSource;
 			} else {
 				$params['source'] = 'tsc';
 			}
@@ -354,7 +353,7 @@ class SMWQueryProcessor {
 			if ($source != 'tsc') {
 				$resultHTML .= "\n==$source==\n";
 			}
-				
+
 			if ( ( $query->querymode == SMWQuery::MODE_INSTANCES ) || ( $query->querymode == SMWQuery::MODE_NONE ) ) {
 				wfProfileIn( 'SMWQueryProcessor::getResultFromQuery-printout (SMW)' );
 
@@ -401,9 +400,9 @@ class SMWQueryProcessor {
 
 		if ( array_key_exists( 'format', $params ) ) {
 			global $smwgResultFormats;
-				
+
 			$format = strtolower( trim( $params['format'] ) );
-				
+
 			if ( !array_key_exists( $format, $smwgResultFormats ) ) {
 				$isAlias = self::resolveFormatAliases( $format );
 				if ( !$isAlias ) $format = 'auto';  // If it is an unknown format, defaults to list/table again
