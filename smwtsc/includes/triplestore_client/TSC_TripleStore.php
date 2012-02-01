@@ -492,12 +492,12 @@ class SMWTripleStore extends SMWStoreAdapter {
 		foreach($redirects as $r) {
 			switch($subject->getNamespace()) {
 				case SMW_NS_PROPERTY: $prop = "owl:equivalentProperty";
-				    break;
+				break;
 				case NS_CATEGORY: $prop = "owl:equivalentClass";
-				    break;
+				break;
 				default: $prop = "owl:sameAs";
-				    break;
-				
+				break;
+
 			}
 			$redirect_iri = $this->tsNamespace->getFullIRI($r);
 
@@ -606,7 +606,7 @@ class SMWTripleStore extends SMWStoreAdapter {
 				if (isset($smwgSPARQLResultEncoding) && $smwgSPARQLResultEncoding == 'UTF-8') {
 					$response = utf8_decode($response);
 				}
-                   
+				 
 				// check for valid UTF8
 				if (!$this->isUTF8($response)) {
 					$sqr = new SMWHaloQueryResult(array(), $query, array(), $this, false);
@@ -635,13 +635,17 @@ class SMWTripleStore extends SMWStoreAdapter {
 						if ($e->getCode() == 0) {
 							// happens most likely when TSC is not running
 							global $smwgHaloWebserviceEndpoint;
-							@header("Cache-Control: no-cache");
-							@header('Pragma: no-cache');
+							if (!headers_sent()) {
+								@header("Cache-Control: no-cache");
+								@header('Pragma: no-cache');
+							}
 							$sqr->addErrors(array(wfMsg('smw_ts_notconnected', $smwgHaloWebserviceEndpoint)));
 
 						} else {
-							@header("Cache-Control: no-cache");
-							@header('Pragma: no-cache');
+							if (!headers_sent()) {
+								@header("Cache-Control: no-cache");
+								@header('Pragma: no-cache');
+							}
 							$sqr->addErrors(array($e->getMessage()));
 						}
 						// in case of an error
@@ -822,20 +826,20 @@ class SMWTripleStore extends SMWStoreAdapter {
 				}
 			} else {
 
-			// native SPARQL query, no main variable
-                // however, it may contain _X_ if a query from translateASK webservice is used.
-                
-                if (count($variableSet) > 0 && "_X_" == $variableSet[0]) {
-                    // SPARQL query contains ?_X_, interprete it as main column
-                    $hasMainColumn = true;
-                    if (in_array('_X_', $variableSet)) { // x is missing for INSTANCE queries
-                        $mapPRTOColumns['_X_'] = array($index);
-                        $prs[] = $print_requests[0];
-                        $index++;
-                    }
-                } else if (in_array("_X_", $variableSet)) {
-                    throw new Exception("SPARQL query must not contain ?_X_ other than as first variable.", 1);
-                }
+				// native SPARQL query, no main variable
+				// however, it may contain _X_ if a query from translateASK webservice is used.
+
+				if (count($variableSet) > 0 && "_X_" == $variableSet[0]) {
+					// SPARQL query contains ?_X_, interprete it as main column
+					$hasMainColumn = true;
+					if (in_array('_X_', $variableSet)) { // x is missing for INSTANCE queries
+						$mapPRTOColumns['_X_'] = array($index);
+						$prs[] = $print_requests[0];
+						$index++;
+					}
+				} else if (in_array("_X_", $variableSet)) {
+					throw new Exception("SPARQL query must not contain ?_X_ other than as first variable.", 1);
+				}
 			}
 
 
@@ -856,11 +860,11 @@ class SMWTripleStore extends SMWStoreAdapter {
 				$var_path = explode(".", $var_name);
 				$sel_var = ucfirst($var_path[count($var_path)-1]);
 				if (substr($sel_var,0,1) == '_') {
-                    $data = NULL;
-                } else {
-                    $data = SMWPropertyValue::makeUserProperty($sel_var);
-                }
-                $propertyExists = !is_null($data) ? Title::newFromText($data->getDataItem()->getLabel(), SMW_NS_PROPERTY)->exists() : false;
+					$data = NULL;
+				} else {
+					$data = SMWPropertyValue::makeUserProperty($sel_var);
+				}
+				$propertyExists = !is_null($data) ? Title::newFromText($data->getDataItem()->getLabel(), SMW_NS_PROPERTY)->exists() : false;
 				if ($propertyExists) {
 					$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_PROP, str_replace("_"," ",$sel_var), $data);
 				} else {
