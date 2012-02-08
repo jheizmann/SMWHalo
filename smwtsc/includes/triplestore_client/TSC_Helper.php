@@ -236,20 +236,21 @@ class TSHelper {
 	 *
 	 * @return boolean
 	 */
-	public static function isSPARQL($parserFunctionParameters) {
-		if (is_array($parserFunctionParameters)) {
-			$isSparql = false;
-			foreach($parserFunctionParameters as $p) {
-				$p = trim($p);
-				$isSparql |= (stripos($p, "SELECT ") === 0 || stripos($p, "PREFIX ") === 0);
-				if ($isSparql) break;
-			}
-			return $isSparql;
-		} else {
-			$p = trim($parserFunctionParameters);
-			return (stripos($p, "SELECT ")  === 0 || stripos($p, "PREFIX ") === 0);
-		}
-	}
+     public static function isSPARQL($parserFunctionParameters) {
+        if (is_array($parserFunctionParameters)) {
+            $isSparql = false;
+            foreach($parserFunctionParameters as $key => $p) {
+                $p = trim($p);
+                $isSparql |= (stripos($p, "SELECT ") === 0 || stripos($p, "PREFIX ") === 0);
+                $isSparql |= (stripos($key, "SELECT ") === 0 || stripos($key, "PREFIX ") === 0);
+                if ($isSparql) break;
+            }
+            return $isSparql;
+        } else {
+            $p = trim($parserFunctionParameters);
+            return (stripos($p, "SELECT ")  === 0 || stripos($p, "PREFIX ") === 0);
+        }
+    }
 
 	/**
 	 * Converts a URI into a Title object.
