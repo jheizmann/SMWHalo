@@ -2,13 +2,12 @@
 <project basedir="." default="smwhalo_build" name="SMWHalo">
 
 
-  <target name="smwhalo_build" depends="versionhint">
-    <echo>Start building ${ant.project.name}: ${ant.file}</echo>
-    <delete dir="bin/zip" />
-    <delete>
-      <fileset dir="bin" includes="smwhalo-*.zip" />
-    </delete>
-
+	<target name="smwhalo_build" depends="versionhint">
+		<echo>Start building ${ant.project.name}: ${ant.file}</echo>
+		<delete dir="bin/zip" quiet="true" />
+		<delete quiet="true">
+			<fileset dir="bin" includes="smwhalo-*.zip" />
+		</delete>
 
     <mkdir dir="bin/zip" />
 
@@ -107,38 +106,25 @@
 
   </target>
 
-  <target name="smwhalo_bundled_build" depends="smwhalo_build">
-    <ant antfile="../../ApplicationProgramming/deploy/build.xml"
-         inheritall="true"
-         dir="../../ApplicationProgramming/deploy"
-         target="build">
-    </ant>
-    <ant antfile="../../ARCLibrary/deploy/build.xml" inheritall="true" dir="../../ARCLibrary/deploy" target="build">
-    </ant>
-    <ant antfile="../../ScriptManager/deploy/build.xml"
-         inheritall="true"
-         dir="../../ScriptManager/deploy"
-         target="scriptmanager_build">
-    </ant>
-    <ant antfile="../../deployment/deploy/build.xml"
-         inheritall="true"
-         dir="../../../deployment/deploy"
-         target="wikiadmintool">
-    </ant>
-    <delete>
-      <fileset dir="bin" includes="smwhalo-bundled*.zip" />
-    </delete>
-    <copy todir="bin/zip/deployment">
-      <fileset dir="../../../deployment/">
-        <exclude name="**/.svn, **/CVS" />
-        <exclude name="**/deploy/**" />
-      </fileset>
-    </copy>
-    <copy file="../../../patches/patch.php"
-          tofile="bin/zip/deployment/tools/patch.php"
-          overwrite="true"
-          verbose="true"
-          failonerror="true" />
+	<target name="smwhalo_bundled_build" depends="smwhalo_build">
+		<ant antfile="../../ApplicationProgramming/deploy/build.xml" inheritall="true" dir="../../ApplicationProgramming/deploy" target="build">
+		</ant>
+		<ant antfile="../../ARCLibrary/deploy/build.xml" inheritall="true" dir="../../ARCLibrary/deploy" target="build">
+		</ant>
+		<ant antfile="../../ScriptManager/deploy/build.xml" inheritall="true" dir="../../ScriptManager/deploy" target="scriptmanager_build">
+		</ant>
+		<ant antfile="../../deployment/deploy/build.xml" inheritall="true" dir="../../../deployment/deploy" target="wikiadmintool">
+		</ant>
+		<delete quiet="true">
+			<fileset dir="bin" includes="smwhalo-bundled*.zip" />
+		</delete>
+		<copy todir="bin/zip/deployment">
+			<fileset dir="../../../deployment/">
+				<exclude name="**/.svn, **/CVS" />
+				<exclude name="**/deploy/**" />
+			</fileset>
+		</copy>
+		<copy file="../../../patches/patch.php" tofile="bin/zip/deployment/tools/patch.php" overwrite="true" verbose="true" failonerror="true" />
 
     <copy todir="bin/zip/extensions/ApplicationProgramming">
       <fileset dir="../../ApplicationProgramming/">
@@ -169,12 +155,12 @@
 
   </target>
 
-  <target name="smwhalo_convenience_build">
-    <delete dir="bin/zip_convenience" />
-    <delete>
-      <fileset dir="bin" includes="smwhalo-convenience*.zip" />
-    </delete>
-    <mkdir dir="bin/zip_convenience" />
+	<target name="smwhalo_convenience_build">
+		<delete dir="bin/zip_convenience" quiet="true" />
+		<delete quiet="true">
+			<fileset dir="bin" includes="smwhalo-convenience*.zip" />
+		</delete>
+		<mkdir dir="bin/zip_convenience" />
 
     <copy todir="bin/zip_convenience/extensions/DynamicPageList">
       <fileset dir="../../DynamicPageList/">
@@ -198,19 +184,19 @@
 
 
 
-    <zip destfile="bin/smwhalo-convenience.zip" basedir="bin/zip_convenience" />
-    <delete dir="bin/zip_convenience" />
-    <exec executable="php">
-      <arg value="../../../buildtools/renameDeployable.php" />
-      <arg value="../deploy.xml" />
-      <arg value="bin/smwhalo-convenience.zip" />
-    </exec>
-  </target>
+		<zip destfile="bin/smwhalo-convenience.zip" basedir="bin/zip_convenience" />
+		<delete dir="bin/zip_convenience" quiet="true" />
+		<exec executable="php">
+			<arg value="../../../buildtools/renameDeployable.php" />
+			<arg value="../deploy.xml" />
+			<arg value="bin/smwhalo-convenience.zip" />
+		</exec>
+	</target>
 
-  <target name="smwplus_source_build" depends="smwhalo_bundled_build">
-    <delete>
-      <fileset dir="bin" includes="smwplus-source*.zip" />
-    </delete>
+	<target name="smwplus_source_build" depends="smwhalo_bundled_build">
+		<delete quiet="true">
+			<fileset dir="bin" includes="smwplus-source*.zip" />
+		</delete>
 
     <ant antfile="../../WYSIWYG/deploy/build.xml" inheritall="true" dir="../../WYSIWYG/deploy" target="build">
     </ant>
@@ -249,15 +235,14 @@
       </fileset>
     </copy>
 
-    <zip destfile="bin/smwplus-source.zip" basedir="bin/zip" />
-    <delete dir="bin/zip" />
-    <exec executable="php">
-      <arg value="../../../buildtools/renameDeployable.php" />
-      <arg value="../deploy.xml" />
-      <arg value="bin/smwplus-source.zip" />
-    </exec>
-  </target>
-
+		<zip destfile="bin/smwplus-source.zip" basedir="bin/zip" />
+		<delete dir="bin/zip" quiet="true" />
+		<exec executable="php">
+			<arg value="../../../buildtools/renameDeployable.php" />
+			<arg value="../deploy.xml" />
+			<arg value="bin/smwplus-source.zip" />
+		</exec>
+	</target>
 
   <target name="versionhint">
     <property environment="env" />
@@ -269,12 +254,12 @@
     </exec>
   </target>
 
-  <target name="cleanzip">
-    <echo>Clean up old zip archives...</echo>
-    <delete>
-      <fileset dir="../../" includes="**/deploy/bin/*.zip" />
-    </delete>
-  </target>
+	<target name="cleanzip">
+		<echo>Clean up old zip archives...</echo>
+		<delete quiet="true">
+			<fileset dir="../../" includes="**/deploy/bin/*.zip" />
+		</delete>
+	</target>
 
   <target name="patches" depends="checkos">
     <echo message="${patchtool}" />
