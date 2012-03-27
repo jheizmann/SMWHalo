@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="smwhalo_build" name="SMWHalo">
 
-
 	<target name="smwhalo_build" depends="versionhint">
 		<echo>Start building ${ant.project.name}: ${ant.file}</echo>
 		<delete dir="bin/zip" quiet="true" />
@@ -73,14 +72,14 @@
 			</fileset>
 		</copy>
 		<copy todir="bin/zip/skins">
-			<fileset file="../../../skins/OntoSkin*" />
+			<fileset file="../ontoskin/OntoSkin*" />
 		</copy>
 		<copy todir="bin/zip/skins/ontoskin3">
-			<fileset dir="../../../skins/ontoskin3">
+			<fileset dir="../ontoskin/ontoskin3">
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
-		<copy todir="bin/zip/skins/monobook" file="../../../skins/ontoskin3/lightbulb.css" />
+		<copy todir="bin/zip/skins/monobook" file="../ontoskin/ontoskin3/lightbulb.css" />
 
 		<copy todir="bin/zip/extensions/SMWHalo">
 			<fileset dir="../">
@@ -305,6 +304,19 @@
 		<condition property="patchtool" value="patch">
 			<os family="unix" />
 		</condition>
+	</target>
+
+	<target name="copy-to-skin">
+
+                <copy todir="${basedir}/../../../skins">
+                        <fileset file="../ontoskin/OntoSkin*" />
+                </copy>
+                <copy todir="${basedir}/../../../skins/ontoskin3">
+                        <fileset dir="../ontoskin/ontoskin3">
+                                <exclude name="**/.svn, **/CVS" />
+                        </fileset>
+                </copy>
+                <copy todir="${basedir}/../../../monobook" file="../ontoskin/ontoskin3/lightbulb.css" />
 	</target>
 
 </project>
